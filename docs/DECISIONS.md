@@ -151,6 +151,18 @@ lever on the project. `/services` becomes a real index page listing the six.
 | **On resolution**   | Swapping to GA4, Plausible or Fathom is a change to that one file. GA4 in particular would bring a consent obligation with it — that is the trade-off to weigh, not the script tag.                                                                                                                                   |
 | **Status**          | OPEN · default in force                                                                                                                                                                                                                                                                                               |
 
+## D13 — Content column widened beyond the artboards
+
+|                              |                                                                                                                                                                                                                                                                      |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Question**                 | The artboards cap the content column at 1140px (1440) and 1280px (1920). On a 14-inch MacBook that leaves noticeably more empty margin than the design implies, because the artboards are snapshots at exactly 1440 and 1920 and most real laptops sit between them. |
+| **Proceeding with**          | Client request: widen to **1260px at 1440 and 1440px at 1920** — `clamp(1260px, calc(720px + 37.5vw), 1440px)`. Backgrounds still bleed the full viewport; only the column inside them changed. At 1710px the column goes from 1218px to 1361px.                     |
+| **Deliberately not widened** | The 860px article column on detail and service pages. Body copy is capped near 68ch for readability, which the brief ranks above visual preference — a wider prose column would be a regression for a 45–75 audience, not an improvement.                            |
+| **Knock-on**                 | Six service bubbles at 250px would fit four across in a 1260px column, leaving a stranded row of two. The bubble row therefore keeps its own cap (`--container-bubbles`) so the staggered layout stays three across, as drawn.                                       |
+| **Touches**                  | `--container-content` in `theme.css`; the anchors in `fluid-scale.test.ts` and `e2e/fidelity.spec.ts`.                                                                                                                                                               |
+| **On resolution**            | Reverting to the artboard values is a one-line change plus those two test anchors.                                                                                                                                                                                   |
+| **Status**                   | DECIDED · deviation from the artboards, at the client's request                                                                                                                                                                                                      |
+
 ## D9 — Node runtime version
 
 |                     |                                                                                                       |

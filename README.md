@@ -128,6 +128,24 @@ typed against the _generated_ types, so components are built against the exact
 shape the CDA returns. Adding credentials flips one discriminated union in
 `src/lib/env.ts` and nothing else moves.
 
+## Note on iCloud Drive
+
+The project lives under `~/Documents`, which iCloud syncs. Build directories
+churn thousands of files, and when iCloud cannot reconcile two versions it keeps
+both — naming the second `app 2`, `chunks 3`, `page 2.tsx`. That has already
+broken this repo twice: once filling `.next` until `rm -rf` hung on it, and once
+leaving a duplicate route group under `src/app` that made the build fail with
+"two parallel pages resolve to the same path" — an error that says nothing about
+iCloud.
+
+```bash
+npm run icloud:shield   # tell the file provider to ignore build output (run once per clone)
+npm run check:icloud    # fail if any conflict copy exists — also part of `npm run verify` and CI
+```
+
+`.gitignore` also refuses the `* 2` pattern, so a conflict copy can never be
+committed.
+
 ## Note on the lockfile
 
 `package-lock.json` must contain the optional platform variants for Linux as well

@@ -142,8 +142,12 @@
      the anchor-link scroll offset — reads this rather than a copied pixel. */
   --spacing-header-h: calc(var(--spacing-control-sm) + 2 * var(--spacing-header-y) + 1px);
 
-  /* Content column caps at 1140px (1440) and 1280px (1920); backgrounds bleed. */
-  --container-content: clamp(1140px, calc(720px + 29.1667vw), 1280px);
+  /* Content column, widened from the artboards' 1140/1280 — see D13. Backgrounds
+     still bleed the full viewport width; only the column inside them changes. */
+  --container-content: clamp(1260px, calc(720px + 37.5vw), 1440px); /* 1260·1260·1440 */
+  /* The service bubbles keep their own cap so the staggered row stays three
+     across, as drawn. A wider content column would fit four and strand two. */
+  --container-bubbles: clamp(900px, calc(660px + 16.666667vw), 980px); /* 900·900·980 */
   --container-article: 860px; /* detail-page title / body / CTA column */
   --container-lead: 1000px; /* detail-page lead image, slightly wider */
   --container-measure: 68ch; /* max line length for body copy */

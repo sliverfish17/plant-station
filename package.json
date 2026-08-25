@@ -19,9 +19,11 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "npm run build && playwright test",
-    "verify": "npm run typecheck && npm run lint && npm run test",
+    "verify": "npm run check:icloud && npm run typecheck && npm run lint && npm run test",
     "test:e2e:only": "playwright test",
-    "lighthouse": "lhci autorun"
+    "lighthouse": "lhci autorun",
+    "check:icloud": "node scripts/check-icloud-duplicates.js",
+    "icloud:shield": "bash scripts/icloud-shield.sh"
   },
   "dependencies": {
     "@contentful/rich-text-react-renderer": "16.2.2",

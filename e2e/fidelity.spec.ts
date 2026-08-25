@@ -64,21 +64,38 @@ test.describe('artboard fidelity', () => {
 
     const column = page.locator('#story > div')
     const box = await column.boundingBox()
-    expect(box?.width).toBeCloseTo(width === 1920 ? 1280 : 1140, 0)
+    // Widened from the artboards' 1140/1280 at the client's request — see D13.
+    expect(box?.width).toBeCloseTo(width === 1920 ? 1440 : 1260, 0)
   })
 
   test('body copy stays within a readable measure', async ({ page }) => {
     await page.goto('/')
 
     const paragraph = page.locator('#story p').first()
-    const [box, fontSize] = await Promise.all([
-      paragraph.boundingBox(),
-      pixelValue(paragraph, 'font-size'),
-    ])
 
-    // ~68ch at the rendered size. A generous upper bound: the point is to catch
-    // a paragraph that has escaped its measure entirely, not to police one word.
-    expect(box?.width ?? 0).toBeLessThanOrEqual(fontSize * 0.55 * 72)
+    // Asserted against the element's own `68ch`, not a character-width guess:
+    // `ch` depends on the typeface, and a fudge factor either passes a paragraph
+    // that has escaped its measure or fails one sitting exactly on it.
+    const measured = await paragraph.evaluate((element) => {
+      const style = getComputedStyle(element)
+      const probe = document.createElement('span')
+      probe.style.font = style.font
+      probe.style.width = '68ch'
+      probe.style.position = 'absolute'
+      probe.style.visibility = 'hidden'
+      element.append(probe)
+      const cap = probe.getBoundingClientRect().width
+      probe.remove()
+
+      return {
+        rendered: element.getBoundingClientRect().width,
+        maxWidth: Number.parseFloat(style.maxWidth),
+        cap,
+      }
+    })
+
+    expect(measured.maxWidth).toBeCloseTo(measured.cap, 0)
+    expect(measured.rendered).toBeLessThanOrEqual(measured.cap + 1)
   })
 
   test('every interactive control clears the 48px tap-target floor', async ({ page }) => {

@@ -24,6 +24,8 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
       - run: npm ci
+      - name: iCloud conflict copies
+        run: npm run check:icloud
       - name: Prettier
         run: npm run format:check
       - name: TypeScript

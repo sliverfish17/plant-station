@@ -33,7 +33,7 @@ export function ServicesSection({ services }: { readonly services: readonly Serv
         .
       </p>
 
-      <ul className="mt-9 flex list-none flex-col gap-3.5 p-0 lg:mt-14 lg:flex-row lg:flex-wrap lg:items-start lg:justify-center lg:gap-14">
+      <ul className="mt-9 flex list-none flex-col gap-3.5 p-0 lg:mx-auto lg:mt-14 lg:max-w-bubbles lg:flex-row lg:flex-wrap lg:items-start lg:justify-center lg:gap-14">
         {services.map((service, position) => (
           <li key={service.sys.id}>
             <ServiceBubble service={service} offset={bubbleOffsetAt(position)} />

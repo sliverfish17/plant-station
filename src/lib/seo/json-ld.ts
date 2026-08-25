@@ -24,9 +24,9 @@ import type {
 
 /**
  * An index signature rather than `Record`: TypeScript refuses a recursive type
- * alias that resolves through a mapped type, and JSON-LD is recursive.
+ * alias that resolves through a mapped type, and JSON-LD is recursive. The lint
+ * rule that normally prefers `Record` recognises the cycle and stays quiet.
  */
-// eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
 type JsonLdObject = { readonly [key: string]: JsonLdValue | undefined }
 
 /** A JSON-LD value: the shape `JSON.stringify` accepts, and nothing looser. */

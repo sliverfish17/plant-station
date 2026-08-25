@@ -45,7 +45,17 @@ export function Hero({ settings }: { readonly settings: SiteSettingsEntry }) {
         />
       </div>
 
-      <div className="absolute inset-0 flex items-end bg-linear-to-t from-scrim/92 from-55% to-transparent lg:items-center lg:bg-linear-to-r lg:from-scrim/88 lg:via-scrim/55 lg:via-42% lg:to-transparent lg:to-68%">
+      {/* The scrim runs bottom-to-top on mobile and left-to-right on desktop,
+          following where the copy sits, so the photograph stays visible
+          everywhere the text is not.
+
+          `lg:from-0%` is load-bearing: the mobile ramp starts its first stop at
+          55%, and a breakpoint that overrides the colour but not the position
+          leaves the stops out of order (55% then 42%). The browser clamps that
+          into a hard vertical seam instead of a fade. Both ends also fade to
+          `scrim/0` rather than `transparent`, which is transparent *black* and
+          greys the midpoint. */}
+      <div className="absolute inset-0 flex items-end bg-linear-to-t from-scrim/92 from-55% to-scrim/0 to-100% lg:items-center lg:bg-linear-to-r lg:from-scrim/88 lg:from-0% lg:via-scrim/55 lg:via-42% lg:to-scrim/0 lg:to-68%">
         <div className="mx-auto w-full max-w-content px-gutter pb-8 lg:pb-0">
           <div className="max-w-[46ch]">
             <h1 id="hero-heading" className="text-hero leading-tight text-near-white">

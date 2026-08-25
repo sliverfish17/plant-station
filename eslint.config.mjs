@@ -104,4 +104,13 @@ export default defineConfig(
       globals: globals.node,
     },
   },
+
+  // Maintenance scripts: plain Node ESM, run by npm rather than bundled.
+  {
+    files: ['scripts/**/*.js'],
+    languageOptions: {
+      sourceType: 'module',
+      globals: globals.node,
+    },
+  },
 )

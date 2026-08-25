@@ -177,7 +177,8 @@ const ANCHORS: readonly (readonly [string, number, number, number])[] = [
   ['--spacing-section', 56, 96, 104],
   ['--spacing-gutter', 24, 48, 48],
   ['--spacing-header-x', 12, 48, 48],
-  ['--container-content', 1140, 1140, 1280],
+  ['--container-content', 1260, 1260, 1440],
+  ['--container-bubbles', 900, 900, 980],
   ['--spacing-control-sm', 48, 50, 50],
   ['--spacing-control-md', 54, 56, 56],
   ['--spacing-control-lg', 54, 58, 60],
@@ -213,7 +214,10 @@ describe('fluid scale', () => {
   it('never drops below the mobile anchor down to the 360px floor', () => {
     // Both are caps rather than rendered sizes at mobile width.
     const rendered = ANCHORS.filter(
-      ([token]) => token !== '--container-content' && token !== '--spacing-bubble',
+      ([token]) =>
+        token !== '--container-content' &&
+        token !== '--container-bubbles' &&
+        token !== '--spacing-bubble',
     )
     for (const [token, at390] of rendered) {
       expect(tokenValueAt(token, 360)).toBeCloseTo(at390, 2)
