@@ -33,17 +33,19 @@ npm run dev
 
 ## Scripts
 
-| Script              | Purpose                                               |
-| ------------------- | ----------------------------------------------------- |
-| `npm run dev`       | Dev server (Turbopack)                                |
-| `npm run build`     | Production build                                      |
-| `npm run typecheck` | `tsc --noEmit`                                        |
-| `npm run lint`      | ESLint (`next lint` is gone in Next 16)               |
-| `npm run format`    | Prettier write                                        |
-| `npm run test`      | Vitest unit tests                                     |
-| `npm run test:e2e`  | Playwright + axe                                      |
-| `npm run codegen`   | Regenerate Contentful types from `.graphql` documents |
-| `npm run verify`    | typecheck + lint + unit tests                         |
+| Script                  | Purpose                                               |
+| ----------------------- | ----------------------------------------------------- |
+| `npm run dev`           | Dev server (Turbopack)                                |
+| `npm run build`         | Production build                                      |
+| `npm run typecheck`     | `tsc --noEmit`                                        |
+| `npm run lint`          | ESLint (`next lint` is gone in Next 16)               |
+| `npm run format`        | Prettier write                                        |
+| `npm run test`          | Vitest unit tests                                     |
+| `npm run test:e2e`      | Build, then Playwright + axe                          |
+| `npm run test:e2e:only` | Playwright against an existing build                  |
+| `npm run lighthouse`    | Lighthouse CI budget (needs a build first)            |
+| `npm run codegen`       | Regenerate Contentful types from `.graphql` documents |
+| `npm run verify`        | typecheck + lint + unit tests                         |
 
 ## Architecture
 
@@ -68,9 +70,12 @@ Rules that hold throughout:
    presentational component plus a headless hook (`useDisclosure`,
    `useCarousel`, `useFeedFilter`) that knows nothing about DOM structure and is
    unit-tested without rendering.
-2. **`"use client"` appears in exactly four components** — the menu drawer, the
-   testimonial slider, the shared filter grid (used by both listing pages) and
-   the contact form. A fifth needs justifying.
+2. **`"use client"` appears in exactly four files** — the menu drawer, the
+   testimonial slider, the shared filtered listing (used by both listing pages)
+   and the contact form. Hooks and leaf components like `FilterChip` carry no
+   directive of their own — they join the client graph through their importer, so
+   the four directives mark the four islands rather than every module inside
+   them. `rg -l "^'use client'" src` is the check.
 3. **Composition over prop explosions.** `Section` owns the
    full-bleed-background / capped-content-column pattern once; cards expose
    slots via `children`.
@@ -134,6 +139,30 @@ docker run --rm --platform linux/amd64 -u "$(id -u):$(id -g)" -e HOME=/tmp \
   -v "$PWD":/app -w /app node:22-bookworm-slim \
   npm install --package-lock-only
 ```
+
+## What is verified, and where
+
+The requirements that are easy to claim and hard to keep are pinned by tests
+rather than by review:
+
+| Requirement                                                                | Where it is checked                                                                                                          |
+| -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Fluid scale hits the artboard values at 390 / 1440 / 1920                  | `src/styles/fluid-scale.test.ts` evaluates the real `clamp()` expressions; `e2e/fidelity.spec.ts` measures the rendered page |
+| Tap targets ≥ 48px                                                         | `e2e/fidelity.spec.ts`, at all four widths                                                                                   |
+| Drawer: Escape, focus trap, focus restored                                 | `use-disclosure.test.ts` for the logic, `e2e/interaction.spec.ts` against a real browser                                     |
+| Slider clamps, no autoplay, no drag needed                                 | `use-carousel.test.ts`, `e2e/interaction.spec.ts`                                                                            |
+| Before-image-absent project card                                           | `feed-card.test.tsx`                                                                                                         |
+| Grids at 2 and 6 entries, equal heights                                    | `plant-card.test.tsx`, `e2e/acceptance.spec.ts`                                                                              |
+| `tel:` / `mailto:` in all five places                                      | `e2e/acceptance.spec.ts`                                                                                                     |
+| 3px focus ring at 2px offset                                               | `e2e/acceptance.spec.ts`                                                                                                     |
+| `prefers-reduced-motion`                                                   | `e2e/interaction.spec.ts` (asserts the emulation applied first)                                                              |
+| Contact form works with JavaScript disabled                                | `e2e/contact.spec.ts`, in a project with JS off                                                                              |
+| Webhook 401s without the shared secret                                     | `src/app/api/revalidate/route.test.ts`                                                                                       |
+| Titles, descriptions ≤ 155, canonicals, JSON-LD, sitemap, robots, OG cards | `e2e/seo.spec.ts`, against the rendered HTML                                                                                 |
+| Lighthouse SEO / Accessibility ≥ 95, CLS ≈ 0                               | `lighthouserc.json`, six routes, in CI                                                                                       |
+
+Latest run: accessibility **100**, SEO **100**, CLS **0.000** on every route;
+performance 93–100.
 
 ## Parked decisions
 
