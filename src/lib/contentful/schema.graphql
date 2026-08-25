@@ -167,6 +167,9 @@ type Project {
   afterImage: Asset!
   afterImageAltText: String!
   afterImageCaption: String
+  leadImage: Asset
+  leadImageAltText: String
+  leadImageCaption: String
   body: ProjectBody
   metaDescription: String
   ctaHeading: String

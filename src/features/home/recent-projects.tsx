@@ -26,9 +26,10 @@ export function RecentProjects({ projects }: { readonly projects: readonly Proje
         </div>
         <Link
           href={ROUTES.feed}
-          className="inline-flex min-h-control-sm items-center text-lead font-semibold whitespace-nowrap text-pink-700"
+          className="inline-flex min-h-control-sm items-center gap-1.5 text-lead font-semibold whitespace-nowrap text-pink-700"
         >
-          See all projects &amp; blog <span aria-hidden="true">→</span>
+          <span>See all projects &amp; blog</span>
+          <span aria-hidden="true">→</span>
         </Link>
       </div>
 

@@ -126,6 +126,10 @@ module.exports = function (migration) {
   assetWithMetadata(project, 'beforeImage', 'Before (3:2)', { required: false })
   assetWithMetadata(project, 'afterImage', 'After (3:2)')
 
+  // The detail page's lead shot. Optional, because most projects will not have a
+  // separate hero photograph — the after image stands in when this is empty.
+  assetWithMetadata(project, 'leadImage', 'Lead image (3:2)', { required: false })
+
   project.createField('body').name('Body').type('RichText').required(false)
   project
     .createField('metaDescription')

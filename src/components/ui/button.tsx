@@ -61,6 +61,7 @@ type ButtonProps = CommonProps & {
   readonly 'aria-label'?: string | undefined
   readonly 'aria-expanded'?: boolean | undefined
   readonly 'aria-controls'?: string | undefined
+  readonly onClick?: (() => void) | undefined
 }
 
 export type PillProps = LinkProps | ButtonProps
@@ -95,6 +96,7 @@ export function Button(props: PillProps) {
       aria-label={props['aria-label']}
       aria-expanded={props['aria-expanded']}
       aria-controls={props['aria-controls']}
+      onClick={props.onClick}
       className={`${classes} disabled:cursor-not-allowed disabled:opacity-60`}
     >
       {children}

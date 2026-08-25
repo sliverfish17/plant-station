@@ -23,9 +23,10 @@ export function FavoritePlantsBand({ plants }: { readonly plants: readonly Plant
         </div>
         <Link
           href={ROUTES.plants}
-          className="inline-flex min-h-control-sm items-center text-lead font-semibold whitespace-nowrap text-pink-on-dark"
+          className="inline-flex min-h-control-sm items-center gap-1.5 text-lead font-semibold whitespace-nowrap text-pink-on-dark"
         >
-          See all my favorites <span aria-hidden="true">→</span>
+          <span>See all my favorites</span>
+          <span aria-hidden="true">→</span>
         </Link>
       </div>
 

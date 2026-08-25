@@ -18,8 +18,24 @@ const TONE_CLASS: Record<SectionTone, string> = {
   olive: 'bg-olive-700 on-dark',
 }
 
+/**
+ * Bands do not all share one vertical rhythm. The home page's sections use the
+ * 56/96/104 scale; the listing pages use a tighter coloured header followed by a
+ * grid band. Naming those cases keeps the padding in the token layer instead of
+ * being overridden per-page with `!important`.
+ */
+export type SectionPadding = 'section' | 'band-header' | 'band-listing' | 'none'
+
+const PADDING_CLASS: Record<SectionPadding, string> = {
+  section: 'py-section',
+  'band-header': 'pt-band-header-top pb-band-header-bottom',
+  'band-listing': 'pt-band-listing-top pb-band-listing-bottom',
+  none: '',
+}
+
 type SectionProps = {
   readonly tone?: SectionTone | undefined
+  readonly pad?: SectionPadding | undefined
   readonly as?: ElementType | undefined
   readonly id?: string | undefined
   readonly className?: string | undefined
@@ -31,6 +47,7 @@ type SectionProps = {
 
 export function Section({
   tone = 'cream',
+  pad = 'section',
   as: Tag = 'section',
   id,
   className,
@@ -42,7 +59,7 @@ export function Section({
     <Tag
       id={id}
       aria-labelledby={ariaLabelledBy}
-      className={`px-gutter py-section ${TONE_CLASS[tone]} ${className ?? ''}`}
+      className={`px-gutter ${PADDING_CLASS[pad]} ${TONE_CLASS[tone]} ${className ?? ''}`}
     >
       <div className={`mx-auto w-full max-w-content ${contentClassName ?? ''}`}>{children}</div>
     </Tag>

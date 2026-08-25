@@ -212,6 +212,9 @@ export type Project = {
   ctaHeading: Maybe<Scalars['String']['output']>;
   ctaLabel: Maybe<Scalars['String']['output']>;
   date: Scalars['DateTime']['output'];
+  leadImage: Maybe<Asset>;
+  leadImageAltText: Maybe<Scalars['String']['output']>;
+  leadImageCaption: Maybe<Scalars['String']['output']>;
   location: Scalars['String']['output'];
   metaDescription: Maybe<Scalars['String']['output']>;
   slug: Scalars['String']['output'];
@@ -509,7 +512,7 @@ export type ProjectBySlugQueryVariables = Exact<{
 }>;
 
 
-export type ProjectBySlugQuery = { __typename?: 'Query', projectCollection: { __typename?: 'ProjectCollection', items: Array<{ __typename: 'Project', summary: string | null, metaDescription: string | null, ctaHeading: string | null, ctaBody: string | null, ctaLabel: string | null, title: string, slug: string, caption: string, location: string, date: string, beforeImageAltText: string | null, beforeImageCaption: string | null, afterImageAltText: string, afterImageCaption: string | null, body: { __typename?: 'ProjectBody', json: unknown, links: { __typename?: 'ProjectBodyLinks', assets: { __typename?: 'ProjectBodyAssets', block: Array<{ __typename?: 'Asset', title: string | null, description: string | null, url: string | null, width: number | null, height: number | null, contentType: string | null, sys: { __typename?: 'Sys', id: string } } | null>, hyperlink: Array<{ __typename?: 'Asset', url: string | null, width: number | null, height: number | null, contentType: string | null, sys: { __typename?: 'Sys', id: string } } | null> } } } | null, sys: { __typename?: 'Sys', id: string }, beforeImage: { __typename?: 'Asset', url: string | null, width: number | null, height: number | null, contentType: string | null, sys: { __typename?: 'Sys', id: string } } | null, afterImage: { __typename?: 'Asset', url: string | null, width: number | null, height: number | null, contentType: string | null, sys: { __typename?: 'Sys', id: string } } } | null> } | null };
+export type ProjectBySlugQuery = { __typename?: 'Query', projectCollection: { __typename?: 'ProjectCollection', items: Array<{ __typename: 'Project', summary: string | null, metaDescription: string | null, leadImageAltText: string | null, leadImageCaption: string | null, ctaHeading: string | null, ctaBody: string | null, ctaLabel: string | null, title: string, slug: string, caption: string, location: string, date: string, beforeImageAltText: string | null, beforeImageCaption: string | null, afterImageAltText: string, afterImageCaption: string | null, leadImage: { __typename?: 'Asset', url: string | null, width: number | null, height: number | null, contentType: string | null, sys: { __typename?: 'Sys', id: string } } | null, body: { __typename?: 'ProjectBody', json: unknown, links: { __typename?: 'ProjectBodyLinks', assets: { __typename?: 'ProjectBodyAssets', block: Array<{ __typename?: 'Asset', title: string | null, description: string | null, url: string | null, width: number | null, height: number | null, contentType: string | null, sys: { __typename?: 'Sys', id: string } } | null>, hyperlink: Array<{ __typename?: 'Asset', url: string | null, width: number | null, height: number | null, contentType: string | null, sys: { __typename?: 'Sys', id: string } } | null> } } } | null, sys: { __typename?: 'Sys', id: string }, beforeImage: { __typename?: 'Asset', url: string | null, width: number | null, height: number | null, contentType: string | null, sys: { __typename?: 'Sys', id: string } } | null, afterImage: { __typename?: 'Asset', url: string | null, width: number | null, height: number | null, contentType: string | null, sys: { __typename?: 'Sys', id: string } } } | null> } | null };
 
 export type ServiceCollectionQueryVariables = Exact<{
   preview?: InputMaybe<Scalars['Boolean']['input']>;
@@ -892,6 +895,11 @@ export const ProjectBySlugDocument = new TypedDocumentString(`
       ...ProjectCard
       summary
       metaDescription
+      leadImageAltText
+      leadImageCaption
+      leadImage {
+        ...AssetFields
+      }
       ctaHeading
       ctaBody
       ctaLabel

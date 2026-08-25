@@ -182,6 +182,11 @@ const shadeBorder: ProjectDetail = {
   afterImage: NO_ASSET_YET('asset-project-shade-border-after'),
   afterImageAltText: 'The same shaded corner filled with layered ferns, hellebores and hostas.',
   afterImageCaption: 'The same corner, one season on.',
+  leadImage: NO_ASSET_YET('asset-project-shade-border-lead'),
+  leadImageAltText:
+    'The finished shade border in July — ferns, hellebores and hostas layered under two maples.',
+  leadImageCaption:
+    'The border in its first July — ferns, hellebores, and hostas under the maples.',
   metaDescription:
     'A dry-shade border in Royal Oak rebuilt with ferns, hellebores and epimedium that close over the soil by year two.',
   ctaHeading: 'Want a border like this?',
@@ -196,7 +201,6 @@ const shadeBorder: ProjectDetail = {
       paragraph(
         'We built the border around plants that genuinely like dry shade — ostrich ferns, hellebores, and epimedium — with spring bulbs tucked between for early color. Everything is spaced to close over the soil by year two, which is what actually keeps the weeding down.',
       ),
-      heading('Before & after'),
       paragraph(
         'Care is a spring cutback and one mulch top-up — the owners handle it themselves with a checklist I left behind.',
       ),
@@ -224,6 +228,9 @@ const frontWalk: ProjectDetail = {
   afterImageAltText:
     'A bluestone path edged with coneflowers and little bluestem leading to a front door.',
   afterImageCaption: 'Bluestone, and a planting that carries into October.',
+  leadImage: null,
+  leadImageAltText: null,
+  leadImageCaption: null,
   metaDescription:
     'A Grosse Pointe front walk rebuilt in bluestone and edged with Michigan natives that hold their looks into autumn.',
   ctaHeading: 'Thinking about your own front entry?',
@@ -262,6 +269,9 @@ const patioPollinator: ProjectDetail = {
   afterImage: NO_ASSET_YET('asset-project-patio-pollinator-after'),
   afterImageAltText: 'A patio edge planted with bergamot and coneflower, bees working the flowers.',
   afterImageCaption: 'Midsummer, with the bergamot at its peak.',
+  leadImage: null,
+  leadImageAltText: null,
+  leadImageCaption: null,
   metaDescription:
     'A Birmingham patio edge replanted for pollinators with bergamot, coneflower and mountain mint.',
   ctaHeading: 'Want more life in your yard?',

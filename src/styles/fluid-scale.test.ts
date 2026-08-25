@@ -188,6 +188,11 @@ const ANCHORS: readonly (readonly [string, number, number, number])[] = [
   ['--text-control-lg', 18, 19, 19],
   ['--spacing-bubble', 250, 250, 270],
   ['--spacing-header-y', 10, 12, 12],
+  ['--spacing-band-header-top', 44, 72, 72],
+  ['--spacing-band-header-bottom', 28, 40, 40],
+  ['--spacing-band-listing-top', 32, 56, 56],
+  ['--spacing-band-listing-bottom', 48, 72, 72],
+  ['--spacing-detail-top', 32, 56, 56],
 ]
 
 describe('fluid scale', () => {

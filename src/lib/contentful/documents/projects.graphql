@@ -13,6 +13,11 @@ query ProjectBySlug($slug: String!, $preview: Boolean = false) {
       ...ProjectCard
       summary
       metaDescription
+      leadImageAltText
+      leadImageCaption
+      leadImage {
+        ...AssetFields
+      }
       ctaHeading
       ctaBody
       ctaLabel
