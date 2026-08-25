@@ -129,6 +129,11 @@
   ); /* 56·96·104 */
   --spacing-gutter: clamp(24px, calc(15.085714px + 2.285714vw), 48px); /* 24·48·48 */
   --spacing-header-x: clamp(12px, calc(-1.371429px + 3.428571vw), 48px); /* 12·48·48 */
+  --spacing-header-y: clamp(10px, calc(9.257143px + 0.190476vw), 12px); /* 10·12·12 */
+  /* Derived, not measured: the header is its tallest control plus its own
+     padding and hairline. Anything that must sit below it — the drawer scrim,
+     the anchor-link scroll offset — reads this rather than a copied pixel. */
+  --spacing-header-h: calc(var(--spacing-control-sm) + 2 * var(--spacing-header-y) + 1px);
 
   /* Content column caps at 1140px (1440) and 1280px (1920); backgrounds bleed. */
   --container-content: clamp(1140px, calc(720px + 29.1667vw), 1280px);
@@ -136,6 +141,36 @@
   --container-lead: 1000px; /* detail-page lead image, slightly wider */
   --container-measure: 68ch; /* max line length for body copy */
   --container-drawer: 420px; /* desktop burger drawer */
+
+  /* ── Controls ──────────────────────────────────────────────────────────── */
+  /* Tap-target heights. The 48px floor is an accessibility requirement, not a
+     style choice, so it is the lower bound of every clamp below. */
+  --spacing-control-sm: clamp(48px, calc(47.257143px + 0.190476vw), 50px); /* 48·50·50 — header */
+  --spacing-control-md: clamp(
+    54px,
+    calc(53.257143px + 0.190476vw),
+    56px
+  ); /* 54·56·56 — CTA, load more */
+  --spacing-control-lg: clamp(
+    54px,
+    max(calc(52.514286px + 0.380952vw), calc(52px + 0.416667vw)),
+    60px
+  ); /* 54·58·60 — hero, submit */
+
+  --spacing-control-x-sm: clamp(12px, calc(6.8px + 1.333333vw), 26px); /* 12·26·26 */
+  --spacing-control-x-md: clamp(36px, calc(34.514286px + 0.380952vw), 40px); /* 36·40·40 */
+  --spacing-control-x-lg: clamp(34px, calc(28px + 0.416667vw), 36px); /* 34·34·36 */
+
+  --text-control-md: clamp(17px, calc(16.628571px + 0.095238vw), 18px); /* 17·18·18 */
+  --text-control-lg: clamp(18px, calc(17.628571px + 0.095238vw), 19px); /* 18·19·19 */
+
+  --spacing-input: 54px;
+  --spacing-chip: 48px; /* filter chip — a tap target */
+  --spacing-chip-sm: 44px; /* credential chip — not interactive */
+  --spacing-slider-button: 52px;
+  --spacing-social: 44px;
+  --spacing-icon-badge: 56px; /* mobile service pill */
+  --spacing-bubble: clamp(250px, calc(190px + 4.166667vw), 270px); /* 250·250·270 */
 
   /* ── Radii ─────────────────────────────────────────────────────────────── */
   --radius-card: 16px;

@@ -71,6 +71,17 @@
   }
 }
 
+@keyframes drawer-in {
+  from {
+    transform: translateX(2rem);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
 @layer utilities {
   /**
    * Skip link — visible only when focused, per landmark navigation spec.

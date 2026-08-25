@@ -11,6 +11,12 @@ const nextConfig: NextConfig = {
   // cacheTag, cacheLife) that the Contentful data layer is built on.
   cacheComponents: true,
 
+  env: {
+    // Resolved once at build so the footer's copyright year never forces a
+    // cached page to render dynamically.
+    NEXT_PUBLIC_BUILD_YEAR: String(new Date().getFullYear()),
+  },
+
   images: {
     // A custom loader hits Contentful's Images API directly, so Vercel's
     // optimizer is bypassed entirely — but the quality allowlist still applies.

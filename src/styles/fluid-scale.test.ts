@@ -178,6 +178,16 @@ const ANCHORS: readonly (readonly [string, number, number, number])[] = [
   ['--spacing-gutter', 24, 48, 48],
   ['--spacing-header-x', 12, 48, 48],
   ['--container-content', 1140, 1140, 1280],
+  ['--spacing-control-sm', 48, 50, 50],
+  ['--spacing-control-md', 54, 56, 56],
+  ['--spacing-control-lg', 54, 58, 60],
+  ['--spacing-control-x-sm', 12, 26, 26],
+  ['--spacing-control-x-md', 36, 40, 40],
+  ['--spacing-control-x-lg', 34, 34, 36],
+  ['--text-control-md', 17, 18, 18],
+  ['--text-control-lg', 18, 19, 19],
+  ['--spacing-bubble', 250, 250, 270],
+  ['--spacing-header-y', 10, 12, 12],
 ]
 
 describe('fluid scale', () => {
@@ -196,9 +206,20 @@ describe('fluid scale', () => {
   })
 
   it('never drops below the mobile anchor down to the 360px floor', () => {
-    for (const [token, at390] of ANCHORS) {
-      if (token === '--container-content') continue // a max-width, not a rendered size
+    // Both are caps rather than rendered sizes at mobile width.
+    const rendered = ANCHORS.filter(
+      ([token]) => token !== '--container-content' && token !== '--spacing-bubble',
+    )
+    for (const [token, at390] of rendered) {
       expect(tokenValueAt(token, 360)).toBeCloseTo(at390, 2)
+    }
+  })
+
+  it('keeps every tap target at or above the 48px accessibility floor', () => {
+    for (const token of ['--spacing-control-sm', '--spacing-control-md', '--spacing-control-lg']) {
+      for (const width of [360, 390, 768, 1024, 1440, 1920]) {
+        expect(Math.round(tokenValueAt(token, width) * 100) / 100).toBeGreaterThanOrEqual(48)
+      }
     }
   })
 
