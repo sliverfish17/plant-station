@@ -1,5 +1,6 @@
-'use client'
-
+/*
+ * Client-only by virtue of its importer, which carries the directive.
+ */
 import { useCallback, useMemo, useState } from 'react'
 
 /**

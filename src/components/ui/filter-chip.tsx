@@ -1,5 +1,9 @@
-'use client'
-
+/*
+ * No `'use client'` of its own: this is only ever rendered by
+ * `FilterableListing`, so it joins the client graph through its importer. The
+ * four directives in the codebase mark the four islands, not every module that
+ * ends up in them.
+ */
 /**
  * A filter chip. Interactive, so it is a real `<button>` with a 48px tap target
  * and `aria-pressed` — a styled `<div>` with a click handler would look
