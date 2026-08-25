@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 
 import { SITE } from '@/config/site'
+import { SiteAnalytics } from '@/features/analytics/analytics'
 import { fontVariables } from '@/lib/fonts'
 
 import './globals.css'
@@ -37,6 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Skip to main content
         </a>
         {children}
+        <SiteAnalytics />
       </body>
     </html>
   )
