@@ -34,9 +34,14 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'npm run build && npm run start',
+    // `next start` only — never `next build`. Playwright starting a build while
+    // one is already running has both processes writing the same .next, and
+    // Next renames rather than deletes what it cannot remove, so the directory
+    // fills with "app 2", "chunks 3" duplicates until it is unusable.
+    // Run `npm run build` yourself first (CI does, as its own step).
+    command: 'npm run start',
     url: baseURL,
     reuseExistingServer: !process.env.CI,
-    timeout: 180_000,
+    timeout: 120_000,
   },
 })

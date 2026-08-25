@@ -15,9 +15,12 @@ import { ProjectMedia } from './project-media'
 export function ProjectCard({
   project,
   variant = 'feed',
+  headingLevel: Heading = 'h3',
 }: {
   readonly project: ProjectEntry
   readonly variant?: 'feed' | 'gallery' | undefined
+  /** `h2` on the listing page, where cards sit directly under the page `h1`. */
+  readonly headingLevel?: 'h2' | 'h3' | undefined
 }) {
   return (
     <Card as="li">
@@ -25,11 +28,11 @@ export function ProjectCard({
 
       {variant === 'feed' ? <Eyebrow tone="pink">Project</Eyebrow> : null}
 
-      <h3
+      <Heading
         className={`font-serif text-card-title text-olive-700 ${variant === 'feed' ? 'mt-1.5' : 'mt-3'}`}
       >
         {project.title}
-      </h3>
+      </Heading>
 
       <p className="mt-1.5 text-body-sm leading-normal text-taupe">
         {project.caption} {project.location}.

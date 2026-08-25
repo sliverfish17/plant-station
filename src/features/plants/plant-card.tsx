@@ -16,9 +16,16 @@ import type { PlantEntry } from '@/lib/contentful/queries'
 export function PlantCard({
   plant,
   tone = 'ivory',
+  headingLevel: Heading = 'h3',
 }: {
   readonly plant: PlantEntry
   readonly tone?: CardTone | undefined
+  /**
+   * `h3` under a section heading on the home band; `h2` on the listing page,
+   * where the cards sit directly beneath the page `h1` and an `h3` would skip a
+   * level.
+   */
+  readonly headingLevel?: 'h2' | 'h3' | undefined
 }) {
   return (
     <Card tone={tone} as="li">
@@ -31,9 +38,9 @@ export function PlantCard({
         rounded="image"
       />
 
-      <h3 className="mt-2 font-serif text-plant-title leading-heading text-olive-700">
+      <Heading className="mt-2 font-serif text-plant-title leading-heading text-olive-700">
         {plant.commonName}
-      </h3>
+      </Heading>
       <p className="text-caption leading-snug text-taupe-mid italic">{plant.latinName}</p>
 
       <ul className="mt-auto flex list-none flex-wrap gap-1.5 p-0 pt-2.5">

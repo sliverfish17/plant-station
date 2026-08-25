@@ -12,11 +12,17 @@ import { ProjectCard } from './project-card'
  * `never` after the two known cases, and returning it is rejected — rather than
  * a card that silently fails to render in production.
  */
-export function FeedCard({ entry }: { readonly entry: FeedEntry }) {
+export function FeedCard({
+  entry,
+  headingLevel,
+}: {
+  readonly entry: FeedEntry
+  readonly headingLevel?: 'h2' | 'h3' | undefined
+}) {
   switch (entry.__typename) {
     case 'Project':
-      return <ProjectCard project={entry} />
+      return <ProjectCard project={entry} headingLevel={headingLevel} />
     case 'BlogPost':
-      return <BlogCard post={entry} />
+      return <BlogCard post={entry} headingLevel={headingLevel} />
   }
 }

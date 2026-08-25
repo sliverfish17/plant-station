@@ -18,8 +18,9 @@
     "codegen:watch": "graphql-codegen --config codegen.ts --watch",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test",
-    "verify": "npm run typecheck && npm run lint && npm run test"
+    "test:e2e": "npm run build && playwright test",
+    "verify": "npm run typecheck && npm run lint && npm run test",
+    "test:e2e:only": "playwright test"
   },
   "dependencies": {
     "@contentful/rich-text-react-renderer": "16.2.2",

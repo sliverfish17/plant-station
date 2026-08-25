@@ -14,17 +14,19 @@ export function PlantGrid({
   plants,
   tone,
   className,
+  headingLevel,
 }: {
   readonly plants: readonly PlantEntry[]
   readonly tone?: CardTone | undefined
   readonly className?: string | undefined
+  readonly headingLevel?: 'h2' | 'h3' | undefined
 }) {
   return (
     <ul
       className={`grid list-none grid-cols-2 items-stretch gap-3.5 p-0 sm:grid-cols-[repeat(auto-fit,minmax(200px,1fr))] lg:gap-5 ${className ?? ''}`}
     >
       {plants.map((plant) => (
-        <PlantCard key={plant.sys.id} plant={plant} tone={tone} />
+        <PlantCard key={plant.sys.id} plant={plant} tone={tone} headingLevel={headingLevel} />
       ))}
     </ul>
   )

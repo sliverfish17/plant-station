@@ -22,3 +22,6 @@ next-env.d.ts
 /playwright/.cache/
 
 .vercel
+
+# TypeScript incremental build info
+*.tsbuildinfo

@@ -90,6 +90,9 @@ export default defineConfig(
       '@typescript-eslint/no-unnecessary-condition': 'off',
       '@typescript-eslint/unbound-method': 'off',
       'no-restricted-syntax': 'off',
+      // Playwright rejects a non-destructured first argument to test/beforeEach,
+      // so a hook that needs only `testInfo` must pass an empty pattern.
+      'no-empty-pattern': 'off',
     },
   },
 

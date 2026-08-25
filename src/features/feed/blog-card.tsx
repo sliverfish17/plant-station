@@ -12,7 +12,14 @@ import type { BlogPostEntry } from '@/lib/contentful/queries'
  * card's, with the same invisible sizer, so a post and a project standing side
  * by side in the shared feed have their titles on the same line.
  */
-export function BlogCard({ post }: { readonly post: BlogPostEntry }) {
+export function BlogCard({
+  post,
+  headingLevel: Heading = 'h3',
+}: {
+  readonly post: BlogPostEntry
+  /** `h2` on the listing page, where cards sit directly under the page `h1`. */
+  readonly headingLevel?: 'h2' | 'h3' | undefined
+}) {
   return (
     <Card as="li">
       <div className="grid grid-cols-2 gap-2">
@@ -33,7 +40,7 @@ export function BlogCard({ post }: { readonly post: BlogPostEntry }) {
         Blog · <time dateTime={post.date}>{formatMonthYear(post.date)}</time>
       </Eyebrow>
 
-      <h3 className="mt-1.5 font-serif text-card-title text-olive-700">{post.title}</h3>
+      <Heading className="mt-1.5 font-serif text-card-title text-olive-700">{post.title}</Heading>
 
       <p className="mt-1.5 text-body-sm leading-normal text-taupe">{post.excerpt}</p>
 
