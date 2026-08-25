@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test, type Locator } from '@playwright/test'
 
 /**
  * Pixel fidelity against the artboards.
@@ -23,10 +23,7 @@ function expectedFor(anchors: Anchors, width: number): number | null {
   return null
 }
 
-async function pixelValue(
-  locator: ReturnType<typeof test.step> extends never ? never : import('@playwright/test').Locator,
-  property: string,
-): Promise<number> {
+async function pixelValue(locator: Locator, property: string): Promise<number> {
   const raw = await locator.evaluate(
     (element, prop) => getComputedStyle(element).getPropertyValue(prop),
     property,
