@@ -64,7 +64,9 @@ export default async function ServicePage({ params }: PageProps) {
         ]}
       />
 
-      <Section tone="cream-alt" pad="band-header" aria-labelledby="service-heading">
+      {/* Header and body share the article column, so the heading, the intro and
+          the prose beneath all line up on one left edge. */}
+      <Section tone="cream-alt" pad="band-header" width="article" aria-labelledby="service-heading">
         <Link
           href={ROUTES.services}
           className="inline-flex min-h-control-sm items-center gap-1.5 text-body-sm font-semibold text-pink-700"
@@ -97,7 +99,7 @@ export default async function ServicePage({ params }: PageProps) {
         </p>
       </Section>
 
-      <Section pad="band-listing" contentClassName="max-w-article!">
+      <Section pad="band-listing" width="article">
         <RichText value={service.body} />
 
         <div className="mt-12">
@@ -111,7 +113,7 @@ export default async function ServicePage({ params }: PageProps) {
       </Section>
 
       {others.length > 0 ? (
-        <Section tone="cream-alt" aria-labelledby="other-services-heading">
+        <Section tone="cream-alt" width="article" aria-labelledby="other-services-heading">
           <h2 id="other-services-heading" className="text-h3 leading-heading">
             Other things I do
           </h2>

@@ -26,6 +26,18 @@ const TONE_CLASS: Record<SectionTone, string> = {
  */
 export type SectionPadding = 'section' | 'band-header' | 'band-listing' | 'none'
 
+/**
+ * How wide the content column is. Most bands use the full 1140/1280 column;
+ * long-form pages use the narrower 860px article column so that a heading and
+ * the prose under it share a left edge and a measure.
+ */
+export type SectionWidth = 'content' | 'article'
+
+const WIDTH_CLASS: Record<SectionWidth, string> = {
+  content: 'max-w-content',
+  article: 'max-w-article',
+}
+
 const PADDING_CLASS: Record<SectionPadding, string> = {
   section: 'py-section',
   'band-header': 'pt-band-header-top pb-band-header-bottom',
@@ -36,6 +48,7 @@ const PADDING_CLASS: Record<SectionPadding, string> = {
 type SectionProps = {
   readonly tone?: SectionTone | undefined
   readonly pad?: SectionPadding | undefined
+  readonly width?: SectionWidth | undefined
   readonly as?: ElementType | undefined
   readonly id?: string | undefined
   readonly className?: string | undefined
@@ -48,6 +61,7 @@ type SectionProps = {
 export function Section({
   tone = 'cream',
   pad = 'section',
+  width = 'content',
   as: Tag = 'section',
   id,
   className,
@@ -61,7 +75,9 @@ export function Section({
       aria-labelledby={ariaLabelledBy}
       className={`px-gutter ${PADDING_CLASS[pad]} ${TONE_CLASS[tone]} ${className ?? ''}`}
     >
-      <div className={`mx-auto w-full max-w-content ${contentClassName ?? ''}`}>{children}</div>
+      <div className={`mx-auto w-full ${WIDTH_CLASS[width]} ${contentClassName ?? ''}`}>
+        {children}
+      </div>
     </Tag>
   )
 }
