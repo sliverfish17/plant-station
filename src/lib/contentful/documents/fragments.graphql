@@ -1,0 +1,95 @@
+# Every asset the site renders needs the same four things: an id to cache-tag by,
+# a URL to transform, intrinsic dimensions to size the box, and alt text.
+fragment AssetFields on Asset {
+  sys {
+    id
+  }
+  url
+  width
+  height
+  contentType
+}
+
+fragment PlantCard on Plant {
+  __typename
+  sys {
+    id
+  }
+  commonName
+  latinName
+  lightTag
+  waterTag
+  isNative
+  featured
+  order
+  photoAltText
+  photoCaption
+  photo {
+    ...AssetFields
+  }
+}
+
+# Shared by the home gallery, the feed grid and the detail page — one shape, so
+# a card and its detail page can never disagree about what a project is.
+fragment ProjectCard on Project {
+  __typename
+  sys {
+    id
+  }
+  title
+  slug
+  caption
+  location
+  date
+  beforeImageAltText
+  beforeImageCaption
+  beforeImage {
+    ...AssetFields
+  }
+  afterImageAltText
+  afterImageCaption
+  afterImage {
+    ...AssetFields
+  }
+}
+
+fragment BlogPostCard on BlogPost {
+  __typename
+  sys {
+    id
+  }
+  title
+  slug
+  excerpt
+  date
+  author
+  readingMinutes
+  thumbnailAltText
+  thumbnailCaption
+  thumbnail {
+    ...AssetFields
+  }
+}
+
+fragment TestimonialFields on Testimonial {
+  __typename
+  sys {
+    id
+  }
+  quote
+  attribution
+  town
+  order
+}
+
+fragment ServiceCard on Service {
+  __typename
+  sys {
+    id
+  }
+  name
+  slug
+  summary
+  iconKey
+  order
+}

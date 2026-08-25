@@ -1,6 +1,7 @@
 import js from '@eslint/js'
 import nextPlugin from '@next/eslint-plugin-next'
 import { defineConfig } from 'eslint/config'
+import globals from 'globals'
 import tseslint from 'typescript-eslint'
 
 export default defineConfig(
@@ -18,17 +19,17 @@ export default defineConfig(
   },
 
   js.configs.recommended,
-  ...tseslint.configs.strictTypeChecked,
-  ...tseslint.configs.stylisticTypeChecked,
 
+  // Type-aware linting applies to the application only. The Contentful migration
+  // is plain CommonJS executed by contentful-migration's own CLI against an
+  // untyped `migration` object; running type-aware rules over it produces
+  // hundreds of unsafe-any reports about an API TypeScript cannot see.
   {
+    files: ['**/*.ts', '**/*.tsx'],
+    extends: [tseslint.configs.strictTypeChecked, tseslint.configs.stylisticTypeChecked],
     languageOptions: {
       parserOptions: {
-        projectService: {
-          // Only the .mjs build tooling sits outside the tsconfig program;
-          // the .config.ts files are already in it.
-          allowDefaultProject: ['*.mjs'],
-        },
+        projectService: { allowDefaultProject: ['*.mjs'] },
         tsconfigRootDir: import.meta.dirname,
       },
     },
@@ -89,6 +90,15 @@ export default defineConfig(
       '@typescript-eslint/no-unnecessary-condition': 'off',
       '@typescript-eslint/unbound-method': 'off',
       'no-restricted-syntax': 'off',
+    },
+  },
+
+  // The Contentful migration script.
+  {
+    files: ['contentful/migrations/*.cjs'],
+    languageOptions: {
+      sourceType: 'commonjs',
+      globals: globals.node,
     },
   },
 )

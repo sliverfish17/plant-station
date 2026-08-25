@@ -92,6 +92,49 @@ across 360–1920 and exact at every artboard anchor.
 `src/styles/fluid-scale.test.ts` evaluates the real CSS expressions and asserts
 those anchors, so a mistyped coefficient fails CI rather than shipping.
 
+## Content
+
+The content model lives in `contentful/migrations/001-initial-content-model.cjs`
+— an executable migration, so the space can be recreated from scratch:
+
+```bash
+npx contentful-migration --space-id $CONTENTFUL_SPACE_ID \
+  --environment-id $CONTENTFUL_ENVIRONMENT \
+  contentful/migrations/001-initial-content-model.cjs
+```
+
+Reads go through `src/lib/contentful/read.ts`. Underneath it:
+
+- `documents/*.graphql` are the queries; `npm run codegen` turns them into types
+  and `TypedDocumentString`s, so there is no GraphQL client at runtime and no
+  hand-written response interface anywhere.
+- `queries.ts` is the cached layer — one `"use cache"` boundary per query, each
+  tagging every entry `sys.id` it returned plus its collection tag, with
+  `cacheLife('max')`. Nothing expires on a clock; a publish webhook is the only
+  thing that invalidates.
+- `POST /api/revalidate` takes the Contentful webhook, checks a shared secret in
+  constant time, and revalidates the entry tag plus its collection tag.
+- `/api/preview` enables draft mode; draft reads bypass the cache and hit the
+  Preview API.
+
+**Contentful is optional in development.** With no credentials, reads return the
+seed content in `src/lib/contentful/seed/` — the copy from the design canvas,
+typed against the _generated_ types, so components are built against the exact
+shape the CDA returns. Adding credentials flips one discriminated union in
+`src/lib/env.ts` and nothing else moves.
+
+## Note on the lockfile
+
+`package-lock.json` must contain the optional platform variants for Linux as well
+as macOS, or `npm ci` fails on CI while succeeding locally. If you add a
+dependency on a Mac, regenerate the lockfile for Linux before pushing:
+
+```bash
+docker run --rm --platform linux/amd64 -u "$(id -u):$(id -g)" -e HOME=/tmp \
+  -v "$PWD":/app -w /app node:22-bookworm-slim \
+  npm install --package-lock-only
+```
+
 ## Parked decisions
 
 Several business decisions are genuinely open. They are **not** guessed and

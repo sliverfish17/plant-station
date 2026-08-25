@@ -1,0 +1,36 @@
+query ProjectCollection($preview: Boolean = false, $limit: Int = 100) {
+  projectCollection(preview: $preview, limit: $limit, order: [date_DESC]) {
+    total
+    items {
+      ...ProjectCard
+    }
+  }
+}
+
+query ProjectBySlug($slug: String!, $preview: Boolean = false) {
+  projectCollection(preview: $preview, limit: 1, where: { slug: $slug }) {
+    items {
+      ...ProjectCard
+      summary
+      metaDescription
+      ctaHeading
+      ctaBody
+      ctaLabel
+      body {
+        json
+        links {
+          assets {
+            block {
+              ...AssetFields
+              title
+              description
+            }
+            hyperlink {
+              ...AssetFields
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,416 @@
+"""
+Snapshot of the Contentful GraphQL Content Delivery schema for this space.
+
+Contentful generates this schema from the content model in
+`contentful/migrations/001-initial-content-model.cjs`. The snapshot exists so
+that codegen — and therefore every type the app is built against — works before
+the space exists, and so that schema drift is a reviewable diff rather than a
+runtime surprise.
+
+Keeping it honest: once real credentials land, run
+
+    CONTENTFUL_SCHEMA_FROM_API=1 npm run codegen
+
+which introspects the live endpoint instead. Any difference between the live
+schema and this file shows up immediately as a codegen or typecheck failure.
+
+Only the subset the app actually queries is modelled. Required model fields are
+non-null here, matching how Contentful marks them; optional fields stay nullable
+— which is exactly what makes the "before image absent" case (a documented
+acceptance criterion) impossible to forget.
+"""
+scalar DateTime
+scalar Dimension
+scalar HexColor
+scalar JSON
+scalar Quality
+
+type Sys {
+  id: String!
+  spaceId: String!
+  environmentId: String!
+  publishedAt: DateTime
+  firstPublishedAt: DateTime
+  publishedVersion: Int
+}
+
+input SysFilter {
+  id: String
+  id_in: [String]
+  publishedAt_exists: Boolean
+}
+
+enum ImageFormat {
+  JPG
+  JPG_PROGRESSIVE
+  PNG
+  PNG8
+  WEBP
+  AVIF
+}
+
+enum ImageResizeStrategy {
+  FIT
+  PAD
+  FILL
+  SCALE
+  CROP
+  THUMB
+}
+
+enum ImageResizeFocus {
+  CENTER
+  TOP
+  TOP_RIGHT
+  TOP_LEFT
+  BOTTOM
+  BOTTOM_RIGHT
+  BOTTOM_LEFT
+  RIGHT
+  LEFT
+  FACE
+  FACES
+}
+
+input ImageTransformOptions {
+  width: Dimension
+  height: Dimension
+  quality: Quality
+  cornerRadius: Int
+  resizeStrategy: ImageResizeStrategy
+  resizeFocus: ImageResizeFocus
+  backgroundColor: HexColor
+  format: ImageFormat
+}
+
+type Asset {
+  sys: Sys!
+  title: String
+  description: String
+  contentType: String
+  fileName: String
+  size: Int
+  url(transform: ImageTransformOptions): String
+  width: Int
+  height: Int
+}
+
+# ── plant ─────────────────────────────────────────────────────────────────────
+
+type Plant {
+  sys: Sys!
+  commonName: String!
+  latinName: String!
+  photo: Asset!
+  photoAltText: String!
+  photoCaption: String
+  lightTag: String!
+  waterTag: String!
+  isNative: Boolean!
+  featured: Boolean!
+  order: Int!
+}
+
+type PlantCollection {
+  total: Int!
+  skip: Int!
+  limit: Int!
+  items: [Plant]!
+}
+
+input PlantFilter {
+  sys: SysFilter
+  featured: Boolean
+  isNative: Boolean
+  lightTag: String
+  lightTag_in: [String]
+  waterTag: String
+  waterTag_in: [String]
+}
+
+enum PlantOrder {
+  order_ASC
+  order_DESC
+  commonName_ASC
+  commonName_DESC
+  sys_publishedAt_ASC
+  sys_publishedAt_DESC
+}
+
+# ── project ───────────────────────────────────────────────────────────────────
+
+type ProjectBody {
+  json: JSON!
+  links: ProjectBodyLinks!
+}
+
+type ProjectBodyLinks {
+  assets: ProjectBodyAssets!
+}
+
+type ProjectBodyAssets {
+  block: [Asset]!
+  hyperlink: [Asset]!
+}
+
+type Project {
+  sys: Sys!
+  title: String!
+  slug: String!
+  caption: String!
+  location: String!
+  date: DateTime!
+  summary: String
+  beforeImage: Asset
+  beforeImageAltText: String
+  beforeImageCaption: String
+  afterImage: Asset!
+  afterImageAltText: String!
+  afterImageCaption: String
+  body: ProjectBody
+  metaDescription: String
+  ctaHeading: String
+  ctaBody: String
+  ctaLabel: String
+}
+
+type ProjectCollection {
+  total: Int!
+  skip: Int!
+  limit: Int!
+  items: [Project]!
+}
+
+input ProjectFilter {
+  sys: SysFilter
+  slug: String
+  slug_in: [String]
+}
+
+enum ProjectOrder {
+  date_ASC
+  date_DESC
+  title_ASC
+  title_DESC
+  sys_publishedAt_ASC
+  sys_publishedAt_DESC
+}
+
+# ── blogPost ──────────────────────────────────────────────────────────────────
+
+type BlogPostBody {
+  json: JSON!
+  links: BlogPostBodyLinks!
+}
+
+type BlogPostBodyLinks {
+  assets: BlogPostBodyAssets!
+}
+
+type BlogPostBodyAssets {
+  block: [Asset]!
+  hyperlink: [Asset]!
+}
+
+type BlogPost {
+  sys: Sys!
+  title: String!
+  slug: String!
+  excerpt: String!
+  date: DateTime!
+  author: String!
+  readingMinutes: Int!
+  thumbnail: Asset!
+  thumbnailAltText: String!
+  thumbnailCaption: String
+  body: BlogPostBody!
+  metaDescription: String
+  ctaHeading: String
+  ctaBody: String
+  ctaLabel: String
+}
+
+type BlogPostCollection {
+  total: Int!
+  skip: Int!
+  limit: Int!
+  items: [BlogPost]!
+}
+
+input BlogPostFilter {
+  sys: SysFilter
+  slug: String
+  slug_in: [String]
+}
+
+enum BlogPostOrder {
+  date_ASC
+  date_DESC
+  title_ASC
+  title_DESC
+  sys_publishedAt_ASC
+  sys_publishedAt_DESC
+}
+
+# ── testimonial ───────────────────────────────────────────────────────────────
+
+type Testimonial {
+  sys: Sys!
+  quote: String!
+  attribution: String!
+  town: String!
+  order: Int!
+}
+
+type TestimonialCollection {
+  total: Int!
+  skip: Int!
+  limit: Int!
+  items: [Testimonial]!
+}
+
+input TestimonialFilter {
+  sys: SysFilter
+}
+
+enum TestimonialOrder {
+  order_ASC
+  order_DESC
+  sys_publishedAt_ASC
+  sys_publishedAt_DESC
+}
+
+# ── service ───────────────────────────────────────────────────────────────────
+
+type ServiceBody {
+  json: JSON!
+  links: ServiceBodyLinks!
+}
+
+type ServiceBodyLinks {
+  assets: ServiceBodyAssets!
+}
+
+type ServiceBodyAssets {
+  block: [Asset]!
+  hyperlink: [Asset]!
+}
+
+type Service {
+  sys: Sys!
+  name: String!
+  slug: String!
+  summary: String!
+  iconKey: String!
+  order: Int!
+  intro: String!
+  body: ServiceBody
+  metaTitle: String
+  metaDescription: String
+  ctaHeading: String
+  ctaBody: String
+}
+
+type ServiceCollection {
+  total: Int!
+  skip: Int!
+  limit: Int!
+  items: [Service]!
+}
+
+input ServiceFilter {
+  sys: SysFilter
+  slug: String
+  slug_in: [String]
+}
+
+enum ServiceOrder {
+  order_ASC
+  order_DESC
+  name_ASC
+  name_DESC
+}
+
+# ── siteSettings ──────────────────────────────────────────────────────────────
+
+type SiteSettings {
+  sys: Sys!
+  internalName: String!
+  heroImageDesktop: Asset!
+  heroImageDesktopAltText: String!
+  heroImageDesktopCaption: String
+  heroImageMobile: Asset!
+  heroImageMobileAltText: String!
+  heroImageMobileCaption: String
+  portrait: Asset!
+  portraitAltText: String!
+  portraitCaption: String
+}
+
+type SiteSettingsCollection {
+  total: Int!
+  skip: Int!
+  limit: Int!
+  items: [SiteSettings]!
+}
+
+input SiteSettingsFilter {
+  sys: SysFilter
+}
+
+# ── Query ─────────────────────────────────────────────────────────────────────
+
+type Query {
+  plantCollection(
+    skip: Int = 0
+    limit: Int = 100
+    preview: Boolean
+    locale: String
+    where: PlantFilter
+    order: [PlantOrder]
+  ): PlantCollection
+
+  projectCollection(
+    skip: Int = 0
+    limit: Int = 100
+    preview: Boolean
+    locale: String
+    where: ProjectFilter
+    order: [ProjectOrder]
+  ): ProjectCollection
+
+  blogPostCollection(
+    skip: Int = 0
+    limit: Int = 100
+    preview: Boolean
+    locale: String
+    where: BlogPostFilter
+    order: [BlogPostOrder]
+  ): BlogPostCollection
+
+  testimonialCollection(
+    skip: Int = 0
+    limit: Int = 100
+    preview: Boolean
+    locale: String
+    where: TestimonialFilter
+    order: [TestimonialOrder]
+  ): TestimonialCollection
+
+  serviceCollection(
+    skip: Int = 0
+    limit: Int = 100
+    preview: Boolean
+    locale: String
+    where: ServiceFilter
+    order: [ServiceOrder]
+  ): ServiceCollection
+
+  siteSettingsCollection(
+    skip: Int = 0
+    limit: Int = 1
+    preview: Boolean
+    locale: String
+    where: SiteSettingsFilter
+  ): SiteSettingsCollection
+}

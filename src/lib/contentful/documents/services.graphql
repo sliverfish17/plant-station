@@ -1,0 +1,36 @@
+query ServiceCollection($preview: Boolean = false) {
+  serviceCollection(preview: $preview, limit: 12, order: [order_ASC]) {
+    total
+    items {
+      ...ServiceCard
+    }
+  }
+}
+
+query ServiceBySlug($slug: String!, $preview: Boolean = false) {
+  serviceCollection(preview: $preview, limit: 1, where: { slug: $slug }) {
+    items {
+      ...ServiceCard
+      intro
+      metaTitle
+      metaDescription
+      ctaHeading
+      ctaBody
+      body {
+        json
+        links {
+          assets {
+            block {
+              ...AssetFields
+              title
+              description
+            }
+            hyperlink {
+              ...AssetFields
+            }
+          }
+        }
+      }
+    }
+  }
+}

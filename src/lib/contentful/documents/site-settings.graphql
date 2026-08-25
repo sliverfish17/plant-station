@@ -1,0 +1,26 @@
+query SiteSettings($preview: Boolean = false) {
+  siteSettingsCollection(preview: $preview, limit: 1) {
+    items {
+      __typename
+      sys {
+        id
+      }
+      internalName
+      heroImageDesktopAltText
+      heroImageDesktopCaption
+      heroImageDesktop {
+        ...AssetFields
+      }
+      heroImageMobileAltText
+      heroImageMobileCaption
+      heroImageMobile {
+        ...AssetFields
+      }
+      portraitAltText
+      portraitCaption
+      portrait {
+        ...AssetFields
+      }
+    }
+  }
+}

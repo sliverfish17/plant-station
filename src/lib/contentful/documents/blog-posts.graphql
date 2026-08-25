@@ -1,0 +1,35 @@
+query BlogPostCollection($preview: Boolean = false, $limit: Int = 100) {
+  blogPostCollection(preview: $preview, limit: $limit, order: [date_DESC]) {
+    total
+    items {
+      ...BlogPostCard
+    }
+  }
+}
+
+query BlogPostBySlug($slug: String!, $preview: Boolean = false) {
+  blogPostCollection(preview: $preview, limit: 1, where: { slug: $slug }) {
+    items {
+      ...BlogPostCard
+      metaDescription
+      ctaHeading
+      ctaBody
+      ctaLabel
+      body {
+        json
+        links {
+          assets {
+            block {
+              ...AssetFields
+              title
+              description
+            }
+            hyperlink {
+              ...AssetFields
+            }
+          }
+        }
+      }
+    }
+  }
+}

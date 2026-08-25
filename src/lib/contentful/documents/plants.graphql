@@ -1,0 +1,17 @@
+query PlantCollection($preview: Boolean = false, $limit: Int = 100) {
+  plantCollection(preview: $preview, limit: $limit, order: [order_ASC]) {
+    total
+    items {
+      ...PlantCard
+    }
+  }
+}
+
+query FeaturedPlantCollection($preview: Boolean = false, $limit: Int = 6) {
+  plantCollection(preview: $preview, limit: $limit, where: { featured: true }, order: [order_ASC]) {
+    total
+    items {
+      ...PlantCard
+    }
+  }
+}

@@ -1,0 +1,8 @@
+query TestimonialCollection($preview: Boolean = false, $limit: Int = 20) {
+  testimonialCollection(preview: $preview, limit: $limit, order: [order_ASC]) {
+    total
+    items {
+      ...TestimonialFields
+    }
+  }
+}
