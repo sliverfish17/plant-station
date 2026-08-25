@@ -21,7 +21,7 @@ export function SiteHeader() {
       <div className="mx-auto flex w-full max-w-content items-center justify-between gap-2 px-header-x py-2.5">
         <Link
           href={ROUTES.home}
-          className="flex items-center gap-2 no-underline"
+          className="flex min-h-control-sm items-center gap-2 no-underline"
           aria-label={`${SITE.brandName} — home`}
         >
           <LeafMark size={24} className="text-olive-700" />
@@ -35,7 +35,7 @@ export function SiteHeader() {
         <div className="flex items-center gap-2 lg:gap-5">
           <a
             href={telHref}
-            className="hidden text-ui font-semibold text-pink-700 no-underline lg:inline"
+            className="hidden min-h-control-sm items-center text-ui font-semibold text-pink-700 no-underline lg:inline-flex"
           >
             {SITE.phoneDisplay}
           </a>

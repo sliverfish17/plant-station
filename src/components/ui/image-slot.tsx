@@ -15,7 +15,7 @@ type ImageSlotProps = {
   /** The full caption, e.g. "Portrait — Edyta · 4:5". Composed by the caller,
    * because the design's slot captions describe the crop as well as the ratio. */
   readonly label: string
-  readonly rounded?: 'image' | 'image-sm' | 'card' | undefined
+  readonly rounded?: keyof typeof ROUNDED_CLASS | undefined
   readonly className?: string | undefined
   /** Suppresses the caption where the design shows a bare tinted block. */
   readonly showLabel?: boolean | undefined
@@ -25,6 +25,8 @@ const ROUNDED_CLASS = {
   image: 'rounded-image',
   'image-sm': 'rounded-image-sm',
   card: 'rounded-card',
+  /** Full-bleed media — the hero runs edge to edge with no radius. */
+  none: '',
 } as const
 
 export function ImageSlot({

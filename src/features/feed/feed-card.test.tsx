@@ -107,10 +107,7 @@ describe('FeedCard', () => {
     const item = screen.getByRole('listitem')
     expect(within(item).getByText('Project')).toBeInTheDocument()
     expect(within(item).getByRole('heading', { level: 3 })).toHaveTextContent(project.title)
-    expect(within(item).getByRole('link')).toHaveAttribute(
-      'href',
-      `/projects-blog/${project.slug}`,
-    )
+    expect(within(item).getByRole('link')).toHaveAttribute('href', `/projects-blog/${project.slug}`)
   })
 
   it('renders a blog entry as a blog card', () => {

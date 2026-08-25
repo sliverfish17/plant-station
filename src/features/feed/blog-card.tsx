@@ -39,7 +39,7 @@ export function BlogCard({ post }: { readonly post: BlogPostEntry }) {
 
       <Link
         href={feedEntryHref(post.slug)}
-        className="mt-auto pt-3 text-body-sm font-semibold text-pink-700"
+        className="mt-auto inline-flex min-h-control-sm items-end pt-3 text-body-sm font-semibold text-pink-700"
       >
         Read <span aria-hidden="true">→</span>
       </Link>

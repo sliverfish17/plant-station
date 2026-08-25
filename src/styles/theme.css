@@ -178,6 +178,9 @@
   --radius-image-sm: 10px;
   --radius-input: 12px;
   --radius-pill: 999px;
+  /* The organic mask on the Meet Edyta portrait — a hand-drawn shape for a
+     hand-drawn trade, taken verbatim from the artboards. */
+  --radius-blob: 46% 54% 52% 48% / 44% 46% 54% 56%;
 
   /* ── Shadows ───────────────────────────────────────────────────────────── */
   --shadow-card: 0 4px 14px rgb(70 55 30 / 0.08);

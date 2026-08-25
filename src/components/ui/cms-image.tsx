@@ -26,7 +26,7 @@ type CmsImageProps = {
   /** Slot label used when there is nothing to render yet. */
   readonly slotLabel: string
   readonly priority?: boolean | undefined
-  readonly rounded?: 'image' | 'image-sm' | 'card' | undefined
+  readonly rounded?: keyof typeof ROUNDED_CLASS | undefined
   readonly className?: string | undefined
   /** Shifts the crop; the hero needs Edyta and the flower bed both in frame. */
   readonly objectPosition?: string | undefined
@@ -37,6 +37,8 @@ const ROUNDED_CLASS = {
   image: 'rounded-image',
   'image-sm': 'rounded-image-sm',
   card: 'rounded-card',
+  /** Full-bleed media — the hero runs edge to edge with no radius. */
+  none: '',
 } as const
 
 /** A ~20px transform, used as the blur-up placeholder. Contentful assets only. */

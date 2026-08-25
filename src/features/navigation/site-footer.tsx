@@ -19,7 +19,10 @@ export function SiteFooter({ variant = 'full' }: { readonly variant?: 'full' | '
         <div className="mx-auto flex w-full max-w-content flex-wrap items-center justify-between gap-6">
           <Wordmark />
           <FooterNav className="flex flex-wrap gap-6" />
-          <a href={telHref} className="text-body-sm font-semibold text-near-white no-underline">
+          <a
+            href={telHref}
+            className="inline-flex min-h-control-sm items-center text-body-sm font-semibold text-near-white no-underline"
+          >
             {SITE.phoneDisplay}
           </a>
         </div>
@@ -38,13 +41,19 @@ export function SiteFooter({ variant = 'full' }: { readonly variant?: 'full' | '
             </p>
           </div>
 
-          <FooterNav className="flex flex-col gap-3" />
+          <FooterNav className="flex flex-col" />
 
-          <div className="flex flex-col gap-2.5">
-            <a href={telHref} className="text-body-sm font-semibold text-near-white no-underline">
+          <div className="flex flex-col">
+            <a
+              href={telHref}
+              className="inline-flex min-h-control-sm items-center text-body-sm font-semibold text-near-white no-underline"
+            >
               {SITE.phoneDisplay}
             </a>
-            <a href={mailtoHref} className="text-body-sm text-on-dark-sand no-underline">
+            <a
+              href={mailtoHref}
+              className="inline-flex min-h-control-sm items-center text-body-sm text-on-dark-sand no-underline"
+            >
               {SITE.email}
             </a>
             <span className="text-caption text-on-dark-muted-alt">{SITE.areaServedRegion}</span>
@@ -102,7 +111,7 @@ function FooterNav({ className }: { readonly className: string }) {
           <li key={link.href}>
             <Link
               href={link.href}
-              className="text-body-sm font-semibold text-on-dark-cream no-underline hover:underline"
+              className="inline-flex min-h-control-sm items-center text-body-sm font-semibold text-on-dark-cream no-underline hover:underline"
             >
               {link.label}
             </Link>
