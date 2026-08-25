@@ -1,0 +1,168 @@
+/**
+ * Design tokens, transcribed from design/README.md § Design Tokens.
+ *
+ * Every value here exists as both a CSS custom property and a Tailwind utility.
+ * Components reference tokens only — no literal colors, sizes, radii or shadows
+ * appear anywhere else in the codebase.
+ *
+ * Fluid scale note: the artboards are snapshots at 390 / 1440 / 1920, and the
+ * ramp between them is not one straight line (type grows faster from 390→1440
+ * than from 1440→1920). Rather than three hard breakpoint jumps, each step is a
+ * `clamp()` over two linear segments composed with `min()` (slope decreasing) or
+ * `max()` (slope increasing). The result is continuous across 360–1920 and lands
+ * exactly on the artboard value at each anchor.
+ */
+
+@theme {
+  /* ── Color ─────────────────────────────────────────────────────────────── */
+  --color-olive-900: #3d431d; /* footer background */
+  --color-olive-700: #515927; /* headings, dark bands, icons, button borders */
+  --color-olive-600: #66703c; /* borders on olive bands */
+  --color-olive-500: #4b521f; /* footer hairline */
+  --color-sage-500: #828d51; /* card rings, secondary borders */
+  --color-sage-300: #c5cc8a; /* subtle borders on light backgrounds */
+  --color-leaf-200: #dce2a4; /* image-placeholder tint */
+  --color-leaf-250: #dfe4a8; /* image-placeholder tint, "after" variant */
+  --color-leaf-100: #eef0c8; /* sun/shade chip, section tint */
+
+  --color-cream-page: #fcf5e1; /* page background */
+  --color-cream-alt: #f8efd5; /* alternating section background */
+  --color-cream-line: #ebdfc0; /* hairline on cream */
+  --color-ivory-card: #fffcf2; /* card background */
+
+  --color-pink-800: #8f2854; /* filled-CTA hover/active */
+  --color-pink-700: #9d2c5b; /* links, testimonial names, labels */
+  --color-pink-600: #b13268; /* primary CTA, active filter chip, focus ring */
+  --color-pink-300: #dd8cab; /* chip borders */
+  --color-pink-100: #f7dde7; /* pink chip/tint background, pressed states */
+  --color-pink-on-dark: #ecc3d3; /* pink text on olive bands */
+  --color-pink-heading-dark: #f6d7e2; /* pink headings on olive bands */
+
+  --color-espresso: #3b3125; /* body text — never pure black */
+  --color-taupe: #64543f; /* muted captions */
+  --color-taupe-dark: #5a5138; /* small captions inside tinted tiles */
+  --color-taupe-mid: #776449; /* CMS annotation / latin-name muted */
+
+  --color-on-dark-body: #e3e8bd; /* body text on olive bands */
+  --color-on-dark-body-alt: #dde2bc;
+  --color-on-dark-cream: #f2eecd; /* nav/footer links on olive */
+  --color-on-dark-sand: #e3ddb0; /* secondary text on olive */
+  --color-on-dark-muted: #c6cc8f;
+  --color-on-dark-muted-alt: #c9cf96;
+  --color-on-dark-faint: #aab377; /* copyright line */
+  --color-near-white: #fdf9e8; /* headings/wordmark on dark */
+  --color-near-white-alt: #fdfaee;
+
+  /* Hero scrim — the olive the gradient fades from. */
+  --color-scrim: #3e421c;
+
+  /* ── Typography ────────────────────────────────────────────────────────── */
+  --font-serif: var(--font-source-serif), ui-serif, Georgia, serif;
+  --font-sans: var(--font-public-sans), system-ui, -apple-system, sans-serif;
+
+  /* Anchors below are written as  A@390 · B@1440 · C@1920. */
+  --text-hero: clamp(
+    38px,
+    min(calc(29.085714px + 2.285714vw), calc(44px + 1.25vw)),
+    68px
+  ); /* 38·62·68 */
+  --text-page-title: clamp(36px, calc(30.057143px + 1.52381vw), 52px); /* 36·52·52 */
+  --text-detail-title: clamp(32px, calc(26.057143px + 1.52381vw), 48px); /* 32·48·48 */
+  --text-h2: clamp(
+    30px,
+    min(calc(25.542857px + 1.142857vw), calc(30px + 0.833333vw)),
+    46px
+  ); /* 30·42·46 */
+  --text-h2-contact: clamp(
+    32px,
+    min(calc(27.542857px + 1.142857vw), calc(32px + 0.833333vw)),
+    48px
+  ); /* 32·44·48 */
+  --text-h3: clamp(24px, calc(21.771429px + 0.571429vw), 30px); /* 24·30·30 */
+  --text-cta-heading: clamp(22px, calc(20.514286px + 0.380952vw), 26px); /* 22·26·26 */
+  --text-card-title: clamp(19px, calc(18.257143px + 0.190476vw), 21px); /* 19·21·21 */
+  --text-plant-title: clamp(17px, calc(15.885714px + 0.285714vw), 20px); /* 17·20·20 */
+  --text-quote: clamp(
+    21px,
+    max(calc(20.628571px + 0.095238vw), calc(19px + 0.208333vw)),
+    23px
+  ); /* 21·22·23 */
+  --text-phone-lg: clamp(
+    22px,
+    min(calc(18.285714px + 0.952381vw), calc(26px + 0.416667vw)),
+    34px
+  ); /* 22·32·34 */
+  --text-menu-link: clamp(
+    34px,
+    calc(36.742857px - 0.190476vw),
+    36px
+  ); /* 36·34·34 — larger on mobile */
+  --text-wordmark: clamp(16px, calc(13.771429px + 0.571429vw), 22px); /* 16·22·22 */
+  --text-wordmark-footer: clamp(20px, calc(19.257143px + 0.190476vw), 22px); /* 20·22·22 */
+
+  --text-lead: clamp(18px, calc(17.257143px + 0.190476vw), 20px); /* 18·20·20 */
+  --text-body: clamp(
+    18px,
+    max(calc(17.628571px + 0.095238vw), calc(16px + 0.208333vw)),
+    20px
+  ); /* 18·19·20 */
+  --text-body-sm: clamp(16px, calc(15.628571px + 0.095238vw), 17px); /* 16·17·17 */
+  --text-ui: clamp(14px, calc(12.885714px + 0.285714vw), 17px); /* 14·17·17 — nav, chips, buttons */
+  --text-caption: clamp(15px, calc(14.628571px + 0.095238vw), 16px); /* 15·16·16 */
+  --text-eyebrow: clamp(12px, calc(11.628571px + 0.095238vw), 13px); /* 12·13·13 */
+
+  --leading-tight: 1.15;
+  --leading-heading: 1.2;
+  --leading-snug: 1.45;
+  --leading-normal: 1.6;
+  --leading-relaxed: 1.7;
+  --leading-loose: 1.75;
+
+  --tracking-eyebrow: 0.05em;
+  --tracking-label: 0.06em;
+
+  /* ── Spacing & layout ──────────────────────────────────────────────────── */
+  --spacing-section: clamp(
+    56px,
+    min(calc(41.142857px + 3.809524vw), calc(72px + 1.666667vw)),
+    104px
+  ); /* 56·96·104 */
+  --spacing-gutter: clamp(24px, calc(15.085714px + 2.285714vw), 48px); /* 24·48·48 */
+  --spacing-header-x: clamp(12px, calc(-1.371429px + 3.428571vw), 48px); /* 12·48·48 */
+
+  /* Content column caps at 1140px (1440) and 1280px (1920); backgrounds bleed. */
+  --container-content: clamp(1140px, calc(720px + 29.1667vw), 1280px);
+  --container-article: 860px; /* detail-page title / body / CTA column */
+  --container-lead: 1000px; /* detail-page lead image, slightly wider */
+  --container-measure: 68ch; /* max line length for body copy */
+  --container-drawer: 420px; /* desktop burger drawer */
+
+  /* ── Radii ─────────────────────────────────────────────────────────────── */
+  --radius-card: 16px;
+  --radius-image: 12px;
+  --radius-image-sm: 10px;
+  --radius-input: 12px;
+  --radius-pill: 999px;
+
+  /* ── Shadows ───────────────────────────────────────────────────────────── */
+  --shadow-card: 0 4px 14px rgb(70 55 30 / 0.08);
+  --shadow-lift: 0 16px 30px rgb(70 72 32 / 0.18);
+  --shadow-drawer: -20px 0 50px rgb(56 58 26 / 0.3);
+
+  /* ── Motion ────────────────────────────────────────────────────────────── */
+  --ease-slide: cubic-bezier(0.4, 0, 0.2, 1);
+  --duration-slide: 350ms;
+  --duration-hover: 180ms;
+
+  /* ── Breakpoints ───────────────────────────────────────────────────────── */
+  --breakpoint-3xl: 120rem; /* 1920 — the largest artboard */
+}
+
+/**
+ * Focus ring, sized once. Every interactive element inherits it; nothing
+ * overrides it. 3px #b13268 with a 2px offset, per the accessibility spec.
+ */
+@theme {
+  --focus-ring-width: 3px;
+  --focus-ring-offset: 2px;
+}

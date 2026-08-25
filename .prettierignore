@@ -1,0 +1,8 @@
+.next
+node_modules
+coverage
+design
+playwright-report
+test-results
+src/lib/contentful/generated
+package-lock.json

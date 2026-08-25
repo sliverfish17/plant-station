@@ -1,0 +1,109 @@
+@import 'tailwindcss';
+@import '../styles/theme.css';
+
+/**
+ * Global base layer. Everything here is either a token application or an
+ * accessibility floor from design/README.md § Interactions & Behavior — no
+ * component styling lives at this level.
+ */
+
+@layer base {
+  html {
+    /* Anchor links land below the sticky header rather than under it. */
+    scroll-padding-block-start: 96px;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-cream-page);
+    color: var(--color-espresso);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: var(--leading-normal);
+    /* Bright-outdoor readability beats hairline elegance for a 45–75 audience. */
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    color: var(--color-olive-700);
+  }
+
+  h1,
+  h2 {
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  h3 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  :focus-visible {
+    outline: var(--focus-ring-width) solid var(--color-pink-600);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  /* Focus rings must survive on olive bands, where pink-600 loses contrast. */
+  .on-dark :focus-visible {
+    outline-color: var(--color-pink-heading-dark);
+  }
+
+  ::selection {
+    background-color: var(--color-pink-100);
+    color: var(--color-pink-800);
+  }
+
+  /* Fixed aspect-ratio media boxes make CLS structurally impossible. */
+  img,
+  svg,
+  video {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+@layer utilities {
+  /**
+   * Skip link — visible only when focused, per landmark navigation spec.
+   */
+  .skip-link {
+    position: absolute;
+    inset-inline-start: var(--spacing-gutter);
+    inset-block-start: 0;
+    z-index: 100;
+    transform: translateY(-150%);
+    border-radius: var(--radius-pill);
+    background-color: var(--color-pink-600);
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  .skip-link:focus-visible {
+    transform: translateY(0.5rem);
+  }
+}
+
+/**
+ * Motion is subtle by design (gentle fade/rise only — no parallax, no
+ * auto-sliders). Under prefers-reduced-motion it stops entirely.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

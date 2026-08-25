@@ -1,0 +1,129 @@
+# Parked decisions
+
+Every genuinely-open business decision on this project. Work proceeds on the
+stated default; nothing is silently guessed. Each affected line in the codebase
+carries a `// TODO(D<n>): …` marker, so `rg "TODO\(D"` lists all open work.
+
+**Protocol**
+
+1. `src/config/site.ts` holds every unresolved value. Nothing else hardcodes them.
+2. Resolving a decision should be a one-file change (plus deleting its TODOs).
+3. New forks get a new row here before the code that assumes an answer is written.
+
+Status legend: **OPEN** (default in force) · **RESOLVED** (answer applied) ·
+**BLOCKING LAUNCH** (open item that must not ship as-is).
+
+---
+
+## D1 — Brand name and domain
+
+|                                  |                                                                                                                                                                                                                                                                                                                                                    |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Question**                     | The handoff wordmark is "Plant Station" on `plant-station.com`, but the business is Edyta Phillips — and the design itself is inconsistent (header wordmark "Plant Station", footer wordmark "Edyta Phillips", copyright "Edyta Phillips Gardening"). Which name carries the `<title>` suffix, schema `name`, domain, and Google Business Profile? |
+| **Proceeding with**              | `brandName: 'Plant Station'`, `legalName: 'Edyta Phillips'`, `copyrightName: 'Edyta Phillips Gardening'` — all three routed through `SITE`, reproducing the design's own split. Domain stays `plant-station.com`.                                                                                                                                  |
+| **Touches**                      | Every `generateMetadata` title, `LocalBusiness`/`ProfessionalService` `name` + `legalName` + `founder`, `metadataBase`, canonicals, sitemap, OG images, header/footer wordmarks.                                                                                                                                                                   |
+| **On resolution**                | Change `SITE.brandName` / `SITE.domain` / `SITE.copyrightName`; delete the D1 TODOs. No component changes.                                                                                                                                                                                                                                         |
+| **Risk if deferred past launch** | Renaming after indexing forfeits accumulated search authority and forces a full redirect map. Decide **before** the domain is pointed at production.                                                                                                                                                                                               |
+| **Status**                       | OPEN · **BLOCKING LAUNCH**                                                                                                                                                                                                                                                                                                                         |
+
+## D2 — Real phone, email and social profiles
+
+|                                  |                                                                                                                                                                                   |
+| -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Question**                     | `+1 248 555 0142` and `hello@edytaphillips.com` are mock placeholders. `555-01xx` is a reserved fictional range. Social profiles (FB/IG in the footer) have no URLs.              |
+| **Proceeding with**              | Placeholders kept in `SITE`, wired as real `tel:`/`mailto:` links in all five required surfaces. `SITE.social` ships empty, so schema `sameAs` is omitted rather than fabricated. |
+| **Touches**                      | Header, services intro, contact band, footer, burger menu, contact form delivery address, `LocalBusiness` NAP, `sameAs`.                                                          |
+| **On resolution**                | Update `SITE.phone` / `SITE.phoneDisplay` / `SITE.email` / `SITE.social`.                                                                                                         |
+| **Risk if deferred past launch** | Inconsistent NAP is an active local-ranking negative, and a live site advertising an unreachable number loses every call it earns.                                                |
+| **Status**                       | OPEN · **BLOCKING LAUNCH**                                                                                                                                                        |
+
+## D3 — Municipalities named in `areaServed`
+
+|                     |                                                                                                                                                                                                                                                                          |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Question**        | Which Metro Detroit municipalities should be named individually? The design copy names Royal Oak, Birmingham, Troy, Livonia and the Grosse Pointes; project captions add Northville and Plymouth. Naming a city Edyta does not actually serve is worse than naming none. |
+| **Proceeding with** | `LocalBusiness.areaServed` ships as the single region `"Metro Detroit, Michigan"` (`SITE.areaServedRegion`). `SITE.areaServed` is an empty array; the JSON-LD builder emits per-city entries only once it is populated.                                                  |
+| **Touches**         | `lib/seo/json-ld.ts`, contact-band service-area copy, potential future per-city landing pages.                                                                                                                                                                           |
+| **On resolution**   | Populate `SITE.areaServed`. The schema builder picks the list up with no other change.                                                                                                                                                                                   |
+| **Status**          | OPEN                                                                                                                                                                                                                                                                     |
+
+## D4 — Are the testimonials real and attributable?
+
+|                     |                                                                                                                                     |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| **Question**        | The five quotes come from the design mock. Are they real client quotes with permission to publish, and is the attribution accurate? |
+| **Proceeding with** | Testimonials render as designed. **No `Review` or `AggregateRating` schema is emitted** — `SITE.emitReviewSchema` is `false`.       |
+| **Touches**         | `lib/seo/json-ld.ts`, `features/testimonials`.                                                                                      |
+| **On resolution**   | Flip `SITE.emitReviewSchema` once quotes are confirmed real, attributable and permissioned.                                         |
+| **Risk if wrong**   | Fabricated review markup is a manual-action risk — Google penalises it site-wide, not just on the offending page.                   |
+| **Status**          | OPEN                                                                                                                                |
+
+## D5 — Where contact submissions land
+
+|                     |                                                                                                                                                            |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Question**        | Beyond a notification email, should submissions persist anywhere — a CRM, a Contentful entry, a spreadsheet?                                               |
+| **Proceeding with** | Resend email to `SITE.email`, behind a single `deliverSubmission()` boundary so a store can be added without touching the form, the action, or the schema. |
+| **Touches**         | `features/contact/deliver-submission.ts` only.                                                                                                             |
+| **On resolution**   | Add the second delivery target inside `deliverSubmission()`.                                                                                               |
+| **Status**          | OPEN                                                                                                                                                       |
+
+---
+
+## Decisions made, not parked
+
+## D0 — Six real service pages instead of `/services#anchor`
+
+The handoff links service bubbles to anchors on a single `/services` page and
+lists "no individual service pages yet" as an intentional omission. **Overridden
+by project direction:** six real pages at
+`/services/{consulting,seasonal-planters,soil-testing,house-plants,garden-design,yard-maintenance}`,
+one shared template, content from Contentful, each with its own metadata and
+`Service` schema. Anchors do not rank; these pages are the highest-value organic
+lever on the project. `/services` becomes a real index page listing the six.
+
+**Status:** RESOLVED — decided at kickoff.
+
+---
+
+## New forks found while building
+
+## D6 — Is there a `/contact` page, or only the home contact band?
+
+|                     |                                                                                                                                                                                                                                                                                                                                                                       |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Question**        | Every artboard links Contact to `#contact` — an anchor into the home page's contact band. But `/favorite-plants`, `/projects-blog`, every detail page and every service page also carry a Contact link and a "Book a Consultation" CTA, and none of them contain that band. As designed, those CTAs would jump to a fragment that does not exist on the current page. |
+| **Proceeding with** | A real `/contact` page reusing the contact band verbatim, plus `#contact` on the home band. Off-home Contact links and CTAs target `/contact`; the home nav still targets `/#contact`.                                                                                                                                                                                |
+| **Touches**         | Navigation link table, every CTA card, footer, burger menu, sitemap, `generateMetadata` for a seventh route.                                                                                                                                                                                                                                                          |
+| **Why not defer**   | Leaving it as designed ships broken CTAs on nine of eleven routes. A dedicated `/contact` page is also a standard local-SEO asset.                                                                                                                                                                                                                                    |
+| **On resolution**   | If a `/contact` page is unwanted, point the off-home links at `/#contact` instead — one change in the nav link table.                                                                                                                                                                                                                                                 |
+| **Status**          | OPEN · default in force                                                                                                                                                                                                                                                                                                                                               |
+
+## D7 — Turnstile keys and the no-JavaScript path
+
+|                     |                                                                                                                                                                                                                                                                                                           |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Question**        | Cloudflare Turnstile is required on the contact form, but the form must also work with JavaScript disabled — and Turnstile's widget needs JavaScript to produce a token.                                                                                                                                  |
+| **Proceeding with** | Honeypot + timing check are the JS-free floor and always run server-side. Turnstile is verified when a token is present and skipped when it is absent, so a no-JS submission still delivers. Keys come from env; with no keys configured the widget is not rendered and verification is skipped (dev/CI). |
+| **Touches**         | `features/contact` server action, env schema, CSP if one is added.                                                                                                                                                                                                                                        |
+| **On resolution**   | Supply `TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY`. If spam volume proves the honeypot insufficient, tighten to "token required" and accept that no-JS submissions break — that is a trade-off the client should make, not the build.                                                                   |
+| **Status**          | OPEN · default in force                                                                                                                                                                                                                                                                                   |
+
+## D8 — Content model additions the handoff omits
+
+|                     |                                                                                                                                                                                                                                                                                                        |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Question**        | The handoff's CMS model has no `slug` on `project`/`blogPost` (but `/projects-blog/[slug]` needs one), no body field on `project` (but artboard 4a shows project body copy), no `readTime`/`author` on `blogPost` (artboard 4b shows both), and no `service` content type at all (D0 needs six).       |
+| **Proceeding with** | Add `slug` (unique) and `body` (rich text) to `project`; `slug`, `author`, `readingMinutes` to `blogPost`; a new `service` type (name, slug, summary, iconKey, body, order, metaTitle, metaDescription, ctaHeading, ctaBody). Every image field keeps its `altText` + `caption` siblings as specified. |
+| **Touches**         | Contentful space, `.graphql` documents, generated types, every page that reads them.                                                                                                                                                                                                                   |
+| **On resolution**   | Confirm the field names before content entry begins — renaming after authoring means re-keying entries.                                                                                                                                                                                                |
+| **Status**          | OPEN · default in force                                                                                                                                                                                                                                                                                |
+
+## D9 — Node runtime version
+
+|                     |                                                                                                       |
+| ------------------- | ----------------------------------------------------------------------------------------------------- |
+| **Question**        | The brief specifies Node 22; the development machine runs Node 24.13.0.                               |
+| **Proceeding with** | `engines.node: ">=22"`; CI pins Node 22 (the Vercel production runtime). Local Node 24 is compatible. |
+| **Touches**         | `package.json`, `.github/workflows/ci.yml`, Vercel project settings.                                  |
+| **Status**          | OPEN · low impact                                                                                     |
