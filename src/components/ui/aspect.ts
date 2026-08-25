@@ -20,8 +20,18 @@ export const ASPECT_RATIOS = {
 
 export type AspectRatio = keyof typeof ASPECT_RATIOS
 
-export function aspectClass(ratio: AspectRatio): string {
-  return ASPECT_RATIOS[ratio]
+/**
+ * `'fill'` means "take the height the grid row already has".
+ *
+ * The project card needs it: an after-only project renders one full-width tile
+ * whose height must match what a before/after *pair* would have been, so that
+ * every card in a row lines up. That height comes from an invisible sizer in the
+ * grid, not from a ratio on the image itself.
+ */
+export type BoxRatio = AspectRatio | 'fill'
+
+export function aspectClass(ratio: BoxRatio): string {
+  return ratio === 'fill' ? 'h-full' : ASPECT_RATIOS[ratio]
 }
 
 /**

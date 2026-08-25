@@ -3,7 +3,7 @@ import Image from 'next/image'
 import type { AssetFieldsFragment } from '@/lib/contentful/generated/graphql'
 import { contentfulImageUrl, isContentfulAsset } from '@/lib/image-loader'
 
-import { type AspectRatio, aspectClass } from './aspect'
+import { type BoxRatio, aspectClass } from './aspect'
 import { ImageSlot } from './image-slot'
 
 /**
@@ -21,7 +21,7 @@ import { ImageSlot } from './image-slot'
 type CmsImageProps = {
   readonly asset: AssetFieldsFragment | null
   readonly alt: string
-  readonly ratio: AspectRatio
+  readonly ratio: BoxRatio
   readonly sizes: string
   /** Slot label used when there is nothing to render yet. */
   readonly slotLabel: string

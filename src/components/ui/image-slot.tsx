@@ -1,4 +1,4 @@
-import { type AspectRatio, aspectClass } from './aspect'
+import { type BoxRatio, aspectClass } from './aspect'
 import { LeafMark } from './leaf-mark'
 
 /**
@@ -11,8 +11,9 @@ import { LeafMark } from './leaf-mark'
  */
 
 type ImageSlotProps = {
-  readonly ratio: AspectRatio
-  /** What belongs in this slot, e.g. "Portrait — Edyta". */
+  readonly ratio: BoxRatio
+  /** The full caption, e.g. "Portrait — Edyta · 4:5". Composed by the caller,
+   * because the design's slot captions describe the crop as well as the ratio. */
   readonly label: string
   readonly rounded?: 'image' | 'image-sm' | 'card' | undefined
   readonly className?: string | undefined
@@ -39,9 +40,7 @@ export function ImageSlot({
     >
       <LeafMark size={44} className="text-olive-700 opacity-15" />
       {showLabel ? (
-        <span className="text-caption leading-snug text-taupe-dark">
-          {label} · {ratio}
-        </span>
+        <span className="text-caption leading-snug text-taupe-dark">{label}</span>
       ) : null}
     </div>
   )

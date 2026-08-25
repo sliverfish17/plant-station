@@ -36,7 +36,7 @@ export default async function Home() {
             alt={settings.heroImageDesktopAltText}
             ratio="16:9"
             sizes={IMAGE_SIZES.hero}
-            slotLabel="Hero — Edyta in garden"
+            slotLabel="Hero — Edyta in garden · 16:9"
             objectPosition="center 58%"
             priority
           />
@@ -45,7 +45,7 @@ export default async function Home() {
             alt={settings.portraitAltText}
             ratio="4:5"
             sizes={IMAGE_SIZES.portrait}
-            slotLabel="Portrait — Edyta"
+            slotLabel="Portrait — Edyta · 4:5"
           />
         </div>
       </Section>
