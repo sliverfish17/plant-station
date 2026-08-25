@@ -119,14 +119,21 @@ test.describe('testimonial slider', () => {
     await expect(counter).toHaveText(width >= 1024 ? '3–5 of 5' : '5 of 5')
   })
 
-  test('never autoplays', async ({ page }) => {
+  test('never autoplays', async ({ page }, testInfo) => {
     await page.goto('/')
 
     const counter = page.locator('[aria-live="polite"]', { hasText: /of 5/ })
-    const before = await counter.textContent()
-    await page.waitForTimeout(2500)
+    const width = testInfo.project.use.viewport?.width ?? 0
+    const settled = width >= 1024 ? '1–3 of 5' : '1 of 5'
 
-    expect(await counter.textContent()).toBe(before)
+    // Wait for the hydrated value before sampling. The server renders the
+    // mobile snapshot ("1 of 5") and `usePerView` resolves to three on desktop
+    // during hydration, so reading immediately captures the pre-hydration text
+    // and any later comparison looks like movement that never happened.
+    await expect(counter).toHaveText(settled)
+
+    await page.waitForTimeout(2500)
+    await expect(counter).toHaveText(settled)
   })
 
   test('keeps off-screen quotes out of the tab order', async ({ page }) => {
