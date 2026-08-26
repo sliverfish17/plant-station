@@ -1,15 +1,15 @@
 import type {
-  AssetFieldsFragment,
-  BlogPostBySlugQuery,
-  BlogPostCardFragment,
-  PlantCardFragment,
-  ProjectBySlugQuery,
-  ProjectCardFragment,
-  ServiceBySlugQuery,
-  ServiceCardFragment,
-  SiteSettingsQuery,
-  TestimonialFieldsFragment,
-} from '../generated/graphql'
+  BlogPostDetailEntry,
+  BlogPostEntry,
+  CmsAsset,
+  PlantEntry,
+  ProjectDetailEntry,
+  ProjectEntry,
+  ServiceDetailEntry,
+  ServiceEntry,
+  SiteSettingsEntry,
+  TestimonialEntry,
+} from '../entries'
 import { LOCAL_HERO_SRC } from '@/lib/local-image'
 
 import { bulletList, heading, paragraph, richText } from './rich-text'
@@ -27,9 +27,8 @@ import { bulletList, heading, paragraph, richText } from './rich-text'
  * `ImageSlot` render the sage placeholder rather than a broken image.
  */
 
-const NO_ASSET_YET = (id: string): AssetFieldsFragment => ({
-  __typename: 'Asset',
-  sys: { __typename: 'Sys', id },
+const NO_ASSET_YET = (id: string): CmsAsset => ({
+  sys: { id },
   url: null,
   width: null,
   height: null,
@@ -45,9 +44,8 @@ const NO_ASSET_YET = (id: string): AssetFieldsFragment => ({
  * local file. When Contentful holds the hero this becomes an ordinary asset URL
  * and that whole path drops out.
  */
-const HERO_PHOTO: AssetFieldsFragment = {
-  __typename: 'Asset',
-  sys: { __typename: 'Sys', id: 'asset-hero-edyta-garden' },
+const HERO_PHOTO: CmsAsset = {
+  sys: { id: 'asset-hero-edyta-garden' },
   url: LOCAL_HERO_SRC,
   width: 1536,
   height: 2048,
@@ -56,7 +54,7 @@ const HERO_PHOTO: AssetFieldsFragment = {
 
 // ── plants ────────────────────────────────────────────────────────────────────
 
-type PlantSeed = Omit<PlantCardFragment, '__typename' | 'sys' | 'photo'> & {
+type PlantSeed = Omit<PlantEntry, '__typename' | 'sys' | 'photo'> & {
   readonly id: string
 }
 
@@ -162,22 +160,20 @@ const PLANT_SEEDS: readonly PlantSeed[] = [
   },
 ]
 
-export const seedPlants: readonly PlantCardFragment[] = PLANT_SEEDS.map(({ id, ...fields }) => ({
+export const seedPlants: readonly PlantEntry[] = PLANT_SEEDS.map(({ id, ...fields }) => ({
   __typename: 'Plant',
-  sys: { __typename: 'Sys', id },
+  sys: { id },
   photo: NO_ASSET_YET(`asset-${id}`),
   ...fields,
 }))
 
 // ── projects ──────────────────────────────────────────────────────────────────
 
-type ProjectDetail = NonNullable<
-  NonNullable<ProjectBySlugQuery['projectCollection']>['items'][number]
->
+type ProjectDetail = ProjectDetailEntry
 
 const shadeBorder: ProjectDetail = {
   __typename: 'Project',
-  sys: { __typename: 'Sys', id: 'project-shade-border-reborn' },
+  sys: { id: 'project-shade-border-reborn' },
   title: 'Shade border, reborn',
   slug: 'shade-border-reborn',
   // The three-line caption case the home gallery is designed to absorb.
@@ -224,7 +220,7 @@ const shadeBorder: ProjectDetail = {
 
 const frontWalk: ProjectDetail = {
   __typename: 'Project',
-  sys: { __typename: 'Sys', id: 'project-front-walk-refresh' },
+  sys: { id: 'project-front-walk-refresh' },
   title: 'Front walk refresh',
   slug: 'front-walk-refresh',
   caption: 'Natives along a new bluestone path.',
@@ -266,7 +262,7 @@ const frontWalk: ProjectDetail = {
 /** The before-image-absent case, which the card and detail template must both handle. */
 const patioPollinator: ProjectDetail = {
   __typename: 'Project',
-  sys: { __typename: 'Sys', id: 'project-patio-pollinator-garden' },
+  sys: { id: 'project-patio-pollinator-garden' },
   title: 'Patio pollinator garden',
   slug: 'patio-pollinator-garden',
   caption: 'One-line caption.',
@@ -310,17 +306,15 @@ export const seedProjectDetails: readonly ProjectDetail[] = [
   patioPollinator,
 ]
 
-export const seedProjects: readonly ProjectCardFragment[] = seedProjectDetails
+export const seedProjects: readonly ProjectEntry[] = seedProjectDetails
 
 // ── blog posts ────────────────────────────────────────────────────────────────
 
-type BlogPostDetail = NonNullable<
-  NonNullable<BlogPostBySlugQuery['blogPostCollection']>['items'][number]
->
+type BlogPostDetail = BlogPostDetailEntry
 
 const claySoil: BlogPostDetail = {
   __typename: 'BlogPost',
-  sys: { __typename: 'Sys', id: 'post-what-to-plant-in-clay-soil' },
+  sys: { id: 'post-what-to-plant-in-clay-soil' },
   title: 'What to plant in clay soil',
   slug: 'what-to-plant-in-clay-soil',
   excerpt: "Our heavy soil is a gift once you stop fighting it. Here's what thrives.",
@@ -363,7 +357,7 @@ const claySoil: BlogPostDetail = {
 
 const winterPlanters: BlogPostDetail = {
   __typename: 'BlogPost',
-  sys: { __typename: 'Sys', id: 'post-planters-that-survive-a-michigan-winter' },
+  sys: { id: 'post-planters-that-survive-a-michigan-winter' },
   title: 'Planters that survive a Michigan winter',
   slug: 'planters-that-survive-a-michigan-winter',
   excerpt: 'Evergreens, twigs, and berries that look good through the freeze.',
@@ -402,7 +396,7 @@ const winterPlanters: BlogPostDetail = {
 
 const fallTidying: BlogPostDetail = {
   __typename: 'BlogPost',
-  sys: { __typename: 'Sys', id: 'post-when-to-stop-tidying-your-fall-garden' },
+  sys: { id: 'post-when-to-stop-tidying-your-fall-garden' },
   title: 'When to stop tidying your fall garden',
   slug: 'when-to-stop-tidying-your-fall-garden',
   excerpt: 'Seed heads and stems feed the birds — and save you a weekend.',
@@ -445,14 +439,14 @@ export const seedBlogPostDetails: readonly BlogPostDetail[] = [
   fallTidying,
 ]
 
-export const seedBlogPosts: readonly BlogPostCardFragment[] = seedBlogPostDetails
+export const seedBlogPosts: readonly BlogPostEntry[] = seedBlogPostDetails
 
 // ── testimonials (D4: rendered, but no Review schema until confirmed) ─────────
 
-export const seedTestimonials: readonly TestimonialFieldsFragment[] = [
+export const seedTestimonials: readonly TestimonialEntry[] = [
   {
     __typename: 'Testimonial',
-    sys: { __typename: 'Sys', id: 'testimonial-margaret-k' },
+    sys: { id: 'testimonial-margaret-k' },
     quote:
       "Edyta listened to how we actually use the yard and gave us a garden we can keep up with. It's the first summer we've enjoyed being out there.",
     attribution: 'Margaret K.',
@@ -461,7 +455,7 @@ export const seedTestimonials: readonly TestimonialFieldsFragment[] = [
   },
   {
     __typename: 'Testimonial',
-    sys: { __typename: 'Sys', id: 'testimonial-tom-d' },
+    sys: { id: 'testimonial-tom-d' },
     quote: 'The soil test alone saved us hundreds in plants that would never have made it.',
     attribution: 'Tom D.',
     town: 'Livonia',
@@ -469,7 +463,7 @@ export const seedTestimonials: readonly TestimonialFieldsFragment[] = [
   },
   {
     __typename: 'Testimonial',
-    sys: { __typename: 'Sys', id: 'testimonial-diane-s' },
+    sys: { id: 'testimonial-diane-s' },
     quote: 'Our porch planters look wonderful every single season. Neighbors ask who does them.',
     attribution: 'Diane S.',
     town: 'Troy',
@@ -477,7 +471,7 @@ export const seedTestimonials: readonly TestimonialFieldsFragment[] = [
   },
   {
     __typename: 'Testimonial',
-    sys: { __typename: 'Sys', id: 'testimonial-susan-bill-r' },
+    sys: { id: 'testimonial-susan-bill-r' },
     quote:
       "Edyta turned our bare new-build lot into something that feels like it's been here forever.",
     attribution: 'Susan & Bill R.',
@@ -486,7 +480,7 @@ export const seedTestimonials: readonly TestimonialFieldsFragment[] = [
   },
   {
     __typename: 'Testimonial',
-    sys: { __typename: 'Sys', id: 'testimonial-carol-m' },
+    sys: { id: 'testimonial-carol-m' },
     quote: 'She checks in every season and the garden just keeps getting better.',
     attribution: 'Carol M.',
     town: 'Plymouth',
@@ -496,14 +490,12 @@ export const seedTestimonials: readonly TestimonialFieldsFragment[] = [
 
 // ── services (D0: six real pages, not anchors) ────────────────────────────────
 
-type ServiceDetail = NonNullable<
-  NonNullable<ServiceBySlugQuery['serviceCollection']>['items'][number]
->
+type ServiceDetail = ServiceDetailEntry
 
 const SERVICE_DETAILS: readonly ServiceDetail[] = [
   {
     __typename: 'Service',
-    sys: { __typename: 'Sys', id: 'service-consulting' },
+    sys: { id: 'service-consulting' },
     name: 'Consulting',
     slug: 'consulting',
     summary: 'A walk-through of your space with a clear plan you can act on.',
@@ -536,7 +528,7 @@ const SERVICE_DETAILS: readonly ServiceDetail[] = [
   },
   {
     __typename: 'Service',
-    sys: { __typename: 'Sys', id: 'service-seasonal-planters' },
+    sys: { id: 'service-seasonal-planters' },
     name: 'Planters for Every Season',
     slug: 'seasonal-planters',
     summary: 'Containers refreshed for spring, summer, fall, and winter.',
@@ -569,7 +561,7 @@ const SERVICE_DETAILS: readonly ServiceDetail[] = [
   },
   {
     __typename: 'Service',
-    sys: { __typename: 'Sys', id: 'service-soil-testing' },
+    sys: { id: 'service-soil-testing' },
     name: 'Soil Testing',
     slug: 'soil-testing',
     summary: 'Find out what your soil actually needs before you plant.',
@@ -602,7 +594,7 @@ const SERVICE_DETAILS: readonly ServiceDetail[] = [
   },
   {
     __typename: 'Service',
-    sys: { __typename: 'Sys', id: 'service-house-plants' },
+    sys: { id: 'service-house-plants' },
     name: 'House Plants',
     slug: 'house-plants',
     summary: 'The right indoor plants for your light, plus care you can keep up with.',
@@ -635,7 +627,7 @@ const SERVICE_DETAILS: readonly ServiceDetail[] = [
   },
   {
     __typename: 'Service',
-    sys: { __typename: 'Sys', id: 'service-garden-design' },
+    sys: { id: 'service-garden-design' },
     name: 'Yard, Patio & Garden Design',
     slug: 'garden-design',
     summary: 'A full plan for the outdoor space you want to spend time in.',
@@ -668,7 +660,7 @@ const SERVICE_DETAILS: readonly ServiceDetail[] = [
   },
   {
     __typename: 'Service',
-    sys: { __typename: 'Sys', id: 'service-yard-maintenance' },
+    sys: { id: 'service-yard-maintenance' },
     name: 'Yard Maintenance',
     slug: 'yard-maintenance',
     summary: 'Seasonal care that keeps everything looking its best.',
@@ -703,17 +695,13 @@ const SERVICE_DETAILS: readonly ServiceDetail[] = [
 
 export const seedServiceDetails: readonly ServiceDetail[] = SERVICE_DETAILS
 
-export const seedServices: readonly ServiceCardFragment[] = SERVICE_DETAILS
+export const seedServices: readonly ServiceEntry[] = SERVICE_DETAILS
 
 // ── site settings ─────────────────────────────────────────────────────────────
 
-type SiteSettingsEntry = NonNullable<
-  NonNullable<SiteSettingsQuery['siteSettingsCollection']>['items'][number]
->
-
 export const seedSiteSettings: SiteSettingsEntry = {
   __typename: 'SiteSettings',
-  sys: { __typename: 'Sys', id: 'site-settings' },
+  sys: { id: 'site-settings' },
   internalName: 'Site settings',
   // Both hero crops come from the same portrait source until separate crops are
   // uploaded; the crop focus differs per breakpoint, not the file.

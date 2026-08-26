@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react'
 
-import type { AssetFieldsFragment } from '@/lib/contentful/generated/graphql'
+import type { CmsAsset } from '@/lib/contentful/queries'
 import { contentfulImageUrl, isContentfulAsset } from '@/lib/image-loader'
 import { isLocalHero, localHeroFallback, localHeroSrcSet } from '@/lib/local-image'
 
@@ -30,7 +30,7 @@ const DESKTOP_MEDIA = '(min-width: 64rem)'
 const CONTENTFUL_WIDTHS = [640, 828, 1080, 1280, 1536, 1920, 2560, 3840] as const
 
 export type HeroCrop = {
-  readonly asset: AssetFieldsFragment
+  readonly asset: CmsAsset
   readonly alt: string
   /** `object-position` for this crop, so the subject stays in frame. */
   readonly focus: string

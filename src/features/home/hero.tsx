@@ -19,28 +19,41 @@ import { HeroImage } from './hero-image'
  * photograph stays visible everywhere the text is not.
  */
 export function Hero({ settings }: { readonly settings: SiteSettingsEntry }) {
-  const hasPhoto = settings.heroImageMobile.url !== null && settings.heroImageDesktop.url !== null
+  // Built as one object rather than a `hasPhoto` boolean so that narrowing both
+  // assets to non-null happens where they are read. An asset link is null
+  // whenever the photo has not been uploaded — or has been uploaded but not
+  // published — and the hero falls back to the reserved slot either way.
+  const mobile = settings.heroImageMobile
+  const desktop = settings.heroImageDesktop
+
+  const crops =
+    mobile?.url === undefined ||
+    mobile.url === null ||
+    desktop?.url === undefined ||
+    desktop.url === null
+      ? null
+      : {
+          mobile: {
+            asset: mobile,
+            alt: settings.heroImageMobileAltText,
+            // The source photograph is portrait; these keep Edyta and the
+            // flower bed in frame at each crop, per the artboards.
+            focus: 'center 47%',
+          },
+          desktop: {
+            asset: desktop,
+            alt: settings.heroImageDesktopAltText,
+            focus: 'center 58%',
+          },
+        }
 
   return (
     <section aria-labelledby="hero-heading" className="relative">
       {/* One fixed-ratio box per breakpoint so the space is reserved before any
           image data arrives; the <picture> inside fetches exactly one file. */}
       <div className="relative aspect-[4/5] w-full overflow-hidden bg-leaf-200 lg:aspect-[16/9]">
-        {hasPhoto ? (
-          <HeroImage
-            mobile={{
-              asset: settings.heroImageMobile,
-              alt: settings.heroImageMobileAltText,
-              // The source photograph is portrait; these keep Edyta and the
-              // flower bed in frame at each crop, per the artboards.
-              focus: 'center 47%',
-            }}
-            desktop={{
-              asset: settings.heroImageDesktop,
-              alt: settings.heroImageDesktopAltText,
-              focus: 'center 58%',
-            }}
-          />
+        {crops !== null ? (
+          <HeroImage mobile={crops.mobile} desktop={crops.desktop} />
         ) : (
           <ImageSlot
             ratio="fill"

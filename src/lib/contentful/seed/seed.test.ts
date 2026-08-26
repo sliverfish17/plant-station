@@ -128,10 +128,10 @@ describe('seed content', () => {
   })
 
   it('has a real hero photograph and placeholder slots everywhere else', () => {
-    expect(seedSiteSettings.heroImageDesktop.url).not.toBeNull()
-    expect(seedSiteSettings.heroImageMobile.url).not.toBeNull()
+    expect(seedSiteSettings.heroImageDesktop?.url).not.toBeNull()
+    expect(seedSiteSettings.heroImageMobile?.url).not.toBeNull()
     // No portrait has been shot yet — ImageSlot renders the placeholder.
-    expect(seedSiteSettings.portrait.url).toBeNull()
+    expect(seedSiteSettings.portrait?.url).toBeNull()
     expect(seedSiteSettings.portraitAltText.trim().length).toBeGreaterThan(0)
   })
 })

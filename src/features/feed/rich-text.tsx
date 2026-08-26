@@ -6,7 +6,7 @@ import { z } from 'zod'
 
 import { IMAGE_SIZES } from '@/components/ui/aspect'
 import { CmsImage } from '@/components/ui/cms-image'
-import type { AssetFieldsFragment } from '@/lib/contentful/generated/graphql'
+import type { CmsAsset } from '@/lib/contentful/queries'
 
 /**
  * Renders a Contentful rich-text body into the article column.
@@ -20,7 +20,7 @@ import type { AssetFieldsFragment } from '@/lib/contentful/generated/graphql'
  * scalar carries no shape — so it is guarded here rather than asserted.
  */
 
-type AssetLink = { readonly sys: { readonly id: string } } & Partial<AssetFieldsFragment> & {
+type AssetLink = { readonly sys: { readonly id: string } } & Partial<CmsAsset> & {
     readonly title?: string | null
     readonly description?: string | null
   }
@@ -117,7 +117,6 @@ export function RichText({ value }: { readonly value: RichTextValue | null }) {
               <figure className="mt-8">
                 <CmsImage
                   asset={{
-                    __typename: 'Asset',
                     sys: asset.sys,
                     url: asset.url,
                     width: asset.width ?? null,

@@ -16,17 +16,28 @@ import {
   TestimonialCollectionDocument,
 } from './generated/graphql'
 import type {
-  BlogPostBySlugQuery,
-  BlogPostCardFragment,
-  PlantCardFragment,
-  ProjectBySlugQuery,
-  ProjectCardFragment,
-  ServiceBySlugQuery,
-  ServiceCardFragment,
-  SiteSettingsQuery,
-  TestimonialFieldsFragment,
-} from './generated/graphql'
-import { present } from './present'
+  BlogPostDetailEntry,
+  BlogPostEntry,
+  FeedEntry,
+  PlantEntry,
+  ProjectDetailEntry,
+  ProjectEntry,
+  ServiceDetailEntry,
+  ServiceEntry,
+  SiteSettingsEntry,
+  TestimonialEntry,
+} from './entries'
+import {
+  parseBlogPostDetail,
+  parseBlogPosts,
+  parsePlants,
+  parseProjectDetail,
+  parseProjects,
+  parseServiceDetail,
+  parseServices,
+  parseSiteSettings,
+  parseTestimonials,
+} from './entries'
 import {
   seedBlogPostDetails,
   seedBlogPosts,
@@ -55,32 +66,26 @@ import { collectionTag, entryTag } from './tags'
  * switch to live content changes what the data is, never its shape.
  */
 
-export type PlantEntry = PlantCardFragment
-export type ProjectEntry = ProjectCardFragment
-export type BlogPostEntry = BlogPostCardFragment
-export type TestimonialEntry = TestimonialFieldsFragment
-export type ServiceEntry = ServiceCardFragment
-
-export type ProjectDetailEntry = NonNullable<
-  NonNullable<ProjectBySlugQuery['projectCollection']>['items'][number]
->
-export type BlogPostDetailEntry = NonNullable<
-  NonNullable<BlogPostBySlugQuery['blogPostCollection']>['items'][number]
->
-export type ServiceDetailEntry = NonNullable<
-  NonNullable<ServiceBySlugQuery['serviceCollection']>['items'][number]
->
-export type SiteSettingsEntry = NonNullable<
-  NonNullable<SiteSettingsQuery['siteSettingsCollection']>['items'][number]
->
-
 /**
- * The Projects & Blog grid renders two entry types in one flow. Modelling it as
- * a union discriminated on `__typename` — rather than a shared "post" shape —
- * is what lets the card dispatcher switch exhaustively and lets each type keep
- * the fields that are genuinely its own.
+ * The app's content types come from `entries.ts`, not from the generated
+ * GraphQL types. Contentful reports every field as nullable regardless of what
+ * the content model requires, so the generated types describe the wire format
+ * rather than what a published entry actually contains; `entries.ts` is where
+ * the two are reconciled.
  */
-export type FeedEntry = ProjectEntry | BlogPostEntry
+export type {
+  BlogPostDetailEntry,
+  BlogPostEntry,
+  CmsAsset,
+  FeedEntry,
+  PlantEntry,
+  ProjectDetailEntry,
+  ProjectEntry,
+  ServiceDetailEntry,
+  ServiceEntry,
+  SiteSettingsEntry,
+  TestimonialEntry,
+} from './entries'
 
 // ── plants ────────────────────────────────────────────────────────────────────
 
@@ -92,7 +97,7 @@ export async function getPlants(): Promise<readonly PlantEntry[]> {
   if (contentSource.mode !== 'live') return seedPlants
 
   const data = await fetchContentful(PlantCollectionDocument)
-  const items = present(data.plantCollection?.items ?? [])
+  const items = parsePlants(data.plantCollection?.items ?? [])
   for (const item of items) cacheTag(entryTag(item.sys.id))
   return items
 }
@@ -105,7 +110,7 @@ export async function getFeaturedPlants(): Promise<readonly PlantEntry[]> {
   if (contentSource.mode !== 'live') return seedPlants.filter((plant) => plant.featured)
 
   const data = await fetchContentful(FeaturedPlantCollectionDocument)
-  const items = present(data.plantCollection?.items ?? [])
+  const items = parsePlants(data.plantCollection?.items ?? [])
   for (const item of items) cacheTag(entryTag(item.sys.id))
   return items
 }
@@ -120,7 +125,7 @@ export async function getProjects(): Promise<readonly ProjectEntry[]> {
   if (contentSource.mode !== 'live') return seedProjects
 
   const data = await fetchContentful(ProjectCollectionDocument)
-  const items = present(data.projectCollection?.items ?? [])
+  const items = parseProjects(data.projectCollection?.items ?? [])
   for (const item of items) cacheTag(entryTag(item.sys.id))
   return items
 }
@@ -137,8 +142,8 @@ export async function getProjectBySlug(slug: string): Promise<ProjectDetailEntry
   }
 
   const data = await fetchContentful(ProjectBySlugDocument, { slug })
-  const entry = present(data.projectCollection?.items ?? [])[0] ?? null
-  if (entry) cacheTag(entryTag(entry.sys.id))
+  const entry = parseProjectDetail(data.projectCollection?.items[0])
+  if (entry !== null) cacheTag(entryTag(entry.sys.id))
   return entry
 }
 
@@ -152,7 +157,7 @@ export async function getBlogPosts(): Promise<readonly BlogPostEntry[]> {
   if (contentSource.mode !== 'live') return seedBlogPosts
 
   const data = await fetchContentful(BlogPostCollectionDocument)
-  const items = present(data.blogPostCollection?.items ?? [])
+  const items = parseBlogPosts(data.blogPostCollection?.items ?? [])
   for (const item of items) cacheTag(entryTag(item.sys.id))
   return items
 }
@@ -167,8 +172,8 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPostDetailEnt
   }
 
   const data = await fetchContentful(BlogPostBySlugDocument, { slug })
-  const entry = present(data.blogPostCollection?.items ?? [])[0] ?? null
-  if (entry) cacheTag(entryTag(entry.sys.id))
+  const entry = parseBlogPostDetail(data.blogPostCollection?.items[0])
+  if (entry !== null) cacheTag(entryTag(entry.sys.id))
   return entry
 }
 
@@ -194,7 +199,7 @@ export async function getTestimonials(): Promise<readonly TestimonialEntry[]> {
   if (contentSource.mode !== 'live') return seedTestimonials
 
   const data = await fetchContentful(TestimonialCollectionDocument)
-  const items = present(data.testimonialCollection?.items ?? [])
+  const items = parseTestimonials(data.testimonialCollection?.items ?? [])
   for (const item of items) cacheTag(entryTag(item.sys.id))
   return items
 }
@@ -209,7 +214,7 @@ export async function getServices(): Promise<readonly ServiceEntry[]> {
   if (contentSource.mode !== 'live') return seedServices
 
   const data = await fetchContentful(ServiceCollectionDocument)
-  const items = present(data.serviceCollection?.items ?? [])
+  const items = parseServices(data.serviceCollection?.items ?? [])
   for (const item of items) cacheTag(entryTag(item.sys.id))
   return items
 }
@@ -224,8 +229,8 @@ export async function getServiceBySlug(slug: string): Promise<ServiceDetailEntry
   }
 
   const data = await fetchContentful(ServiceBySlugDocument, { slug })
-  const entry = present(data.serviceCollection?.items ?? [])[0] ?? null
-  if (entry) cacheTag(entryTag(entry.sys.id))
+  const entry = parseServiceDetail(data.serviceCollection?.items[0])
+  if (entry !== null) cacheTag(entryTag(entry.sys.id))
   return entry
 }
 
@@ -239,12 +244,12 @@ export async function getSiteSettings(): Promise<SiteSettingsEntry> {
   if (contentSource.mode !== 'live') return seedSiteSettings
 
   const data = await fetchContentful(SiteSettingsDocument)
-  const entry = present(data.siteSettingsCollection?.items ?? [])[0]
+  const entry = parseSiteSettings(data.siteSettingsCollection?.items[0])
 
   // The shell cannot render without hero and portrait slots, so an empty or
   // unpublished settings entry falls back to the seed rather than throwing and
   // taking every page down with it.
-  if (!entry) return seedSiteSettings
+  if (entry === null) return seedSiteSettings
 
   cacheTag(entryTag(entry.sys.id))
   return entry

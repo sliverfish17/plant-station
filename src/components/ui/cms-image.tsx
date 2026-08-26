@@ -1,6 +1,6 @@
 import Image from 'next/image'
 
-import type { AssetFieldsFragment } from '@/lib/contentful/generated/graphql'
+import type { CmsAsset } from '@/lib/contentful/queries'
 import { contentfulImageUrl, isContentfulAsset } from '@/lib/image-loader'
 
 import { type BoxRatio, aspectClass } from './aspect'
@@ -19,7 +19,7 @@ import { ImageSlot } from './image-slot'
  */
 
 type CmsImageProps = {
-  readonly asset: AssetFieldsFragment | null
+  readonly asset: CmsAsset | null
   readonly alt: string
   readonly ratio: BoxRatio
   readonly sizes: string

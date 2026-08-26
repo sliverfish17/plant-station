@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
+import { atLeastOneSlug } from '@/lib/static-params'
 import { ROUTES, feedEntryHref } from '@/config/navigation'
 import { DetailArticle, type DetailEntry } from '@/features/feed/detail-article'
 import {
@@ -64,7 +65,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export async function generateStaticParams(): Promise<{ slug: string }[]> {
   const [projects, posts] = await Promise.all([getProjects(), getBlogPosts()])
-  return [...projects, ...posts].map((entry) => ({ slug: entry.slug }))
+  return atLeastOneSlug([...projects, ...posts].map((entry) => ({ slug: entry.slug })))
 }
 
 export default async function FeedEntryPage({ params }: PageProps) {

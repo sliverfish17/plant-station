@@ -12,7 +12,17 @@ import {
   SiteSettingsDocument,
   TestimonialCollectionDocument,
 } from './generated/graphql'
-import { present } from './present'
+import {
+  parseBlogPostDetail,
+  parseBlogPosts,
+  parsePlants,
+  parseProjectDetail,
+  parseProjects,
+  parseServiceDetail,
+  parseServices,
+  parseSiteSettings,
+  parseTestimonials,
+} from './entries'
 import {
   getBlogPostBySlug,
   getBlogPosts,
@@ -57,28 +67,35 @@ async function isPreview(): Promise<boolean> {
 
 const preview = { preview: true } as const
 
+/**
+ * Preview is also where validation earns its keep in the other direction: a
+ * draft with a required field still empty fails to parse and is skipped, and the
+ * warning names the field. That is the same thing Contentful would refuse to
+ * publish, surfaced while the editor is still looking at it.
+ */
+
 export async function readPlants(): Promise<readonly PlantEntry[]> {
   if (!(await isPreview())) return getPlants()
   const data = await fetchContentful(PlantCollectionDocument, undefined, preview)
-  return present(data.plantCollection?.items ?? [])
+  return parsePlants(data.plantCollection?.items ?? [])
 }
 
 export async function readFeaturedPlants(): Promise<readonly PlantEntry[]> {
   if (!(await isPreview())) return getFeaturedPlants()
   const data = await fetchContentful(PlantCollectionDocument, undefined, preview)
-  return present(data.plantCollection?.items ?? []).filter((plant) => plant.featured)
+  return parsePlants(data.plantCollection?.items ?? []).filter((plant) => plant.featured)
 }
 
 export async function readProjects(): Promise<readonly ProjectEntry[]> {
   if (!(await isPreview())) return getProjects()
   const data = await fetchContentful(ProjectCollectionDocument, undefined, preview)
-  return present(data.projectCollection?.items ?? [])
+  return parseProjects(data.projectCollection?.items ?? [])
 }
 
 export async function readBlogPosts(): Promise<readonly BlogPostEntry[]> {
   if (!(await isPreview())) return getBlogPosts()
   const data = await fetchContentful(BlogPostCollectionDocument, undefined, preview)
-  return present(data.blogPostCollection?.items ?? [])
+  return parseBlogPosts(data.blogPostCollection?.items ?? [])
 }
 
 export async function readFeed(): Promise<readonly FeedEntry[]> {
@@ -89,35 +106,35 @@ export async function readFeed(): Promise<readonly FeedEntry[]> {
 export async function readProjectBySlug(slug: string): Promise<ProjectDetailEntry | null> {
   if (!(await isPreview())) return getProjectBySlug(slug)
   const data = await fetchContentful(ProjectBySlugDocument, { slug }, preview)
-  return present(data.projectCollection?.items ?? [])[0] ?? null
+  return parseProjectDetail(data.projectCollection?.items[0])
 }
 
 export async function readBlogPostBySlug(slug: string): Promise<BlogPostDetailEntry | null> {
   if (!(await isPreview())) return getBlogPostBySlug(slug)
   const data = await fetchContentful(BlogPostBySlugDocument, { slug }, preview)
-  return present(data.blogPostCollection?.items ?? [])[0] ?? null
+  return parseBlogPostDetail(data.blogPostCollection?.items[0])
 }
 
 export async function readTestimonials(): Promise<readonly TestimonialEntry[]> {
   if (!(await isPreview())) return getTestimonials()
   const data = await fetchContentful(TestimonialCollectionDocument, undefined, preview)
-  return present(data.testimonialCollection?.items ?? [])
+  return parseTestimonials(data.testimonialCollection?.items ?? [])
 }
 
 export async function readServices(): Promise<readonly ServiceEntry[]> {
   if (!(await isPreview())) return getServices()
   const data = await fetchContentful(ServiceCollectionDocument, undefined, preview)
-  return present(data.serviceCollection?.items ?? [])
+  return parseServices(data.serviceCollection?.items ?? [])
 }
 
 export async function readServiceBySlug(slug: string): Promise<ServiceDetailEntry | null> {
   if (!(await isPreview())) return getServiceBySlug(slug)
   const data = await fetchContentful(ServiceBySlugDocument, { slug }, preview)
-  return present(data.serviceCollection?.items ?? [])[0] ?? null
+  return parseServiceDetail(data.serviceCollection?.items[0])
 }
 
 export async function readSiteSettings(): Promise<SiteSettingsEntry> {
   if (!(await isPreview())) return getSiteSettings()
   const data = await fetchContentful(SiteSettingsDocument, undefined, preview)
-  return present(data.siteSettingsCollection?.items ?? [])[0] ?? seedSiteSettings
+  return parseSiteSettings(data.siteSettingsCollection?.items[0]) ?? seedSiteSettings
 }

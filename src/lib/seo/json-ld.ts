@@ -178,7 +178,7 @@ export function blogPostingJsonLd(post: BlogPostDetailEntry, path: string): Json
     publisher: { '@id': ORGANIZATION_ID },
     mainEntityOfPage: absoluteUrl(path),
     inLanguage: 'en-US',
-    ...(post.thumbnail.url === null
+    ...(post.thumbnail?.url === undefined || post.thumbnail.url === null
       ? {}
       : { image: imageObjectJsonLd(post.thumbnail.url, post.thumbnailAltText) }),
   }
@@ -196,7 +196,7 @@ export function projectJsonLd(project: ProjectDetailEntry, path: string): JsonLd
           project.beforeImage.url,
           project.beforeImageAltText ?? `${project.title} before`,
         ),
-    project.afterImage.url === null
+    project.afterImage?.url === undefined || project.afterImage.url === null
       ? undefined
       : imageObjectJsonLd(project.afterImage.url, project.afterImageAltText),
   ].filter((image): image is JsonLdNode => image !== undefined)

@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 
 import { CtaCard } from '@/components/ui/cta-card'
 import { Section } from '@/components/ui/section'
+import { atLeastOneSlug } from '@/lib/static-params'
 import { ROUTES, serviceHref } from '@/config/navigation'
 import { SITE, mailtoHref, telHref } from '@/config/site'
 import { RichText } from '@/features/feed/rich-text'
@@ -26,7 +27,7 @@ type PageProps = { params: Promise<{ slug: string }> }
 
 export async function generateStaticParams(): Promise<{ slug: string }[]> {
   const services = await getServices()
-  return services.map((service) => ({ slug: service.slug }))
+  return atLeastOneSlug(services.map((service) => ({ slug: service.slug })))
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
