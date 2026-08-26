@@ -63,7 +63,7 @@ function auditWidth(size: (typeof WIDTHS)[number]) {
             if (node.closest('[aria-hidden="true"]') !== null) continue
             if (node.classList.contains('skip-link')) continue
             offenders.push(
-              `${node.tagName.toLowerCase()}.${node.className.toString().slice(0, 40)} ` +
+              `${node.tagName.toLowerCase()}.${node.className.slice(0, 40)} ` +
                 `[${Math.round(rect.left)}→${Math.round(rect.right)}]`,
             )
           }
@@ -98,15 +98,22 @@ test.describe('viewport sweep', () => {
       await page.goto('/')
       await page.waitForLoadState('networkidle')
 
-      const hero = await page.evaluate(() =>
-        performance
+      const hero = await page.evaluate(() => {
+        // `getEntriesByType` is typed as returning the base PerformanceEntry;
+        // `encodedBodySize` lives on PerformanceResourceTiming, so the entries
+        // are narrowed with a guard rather than asserted.
+        const isResourceTiming = (entry: PerformanceEntry): entry is PerformanceResourceTiming =>
+          entry.entryType === 'resource'
+
+        return performance
           .getEntriesByType('resource')
+          .filter(isResourceTiming)
           .filter((entry) => entry.name.includes('edyta-garden'))
           .map((entry) => ({
             name: entry.name.split('/').pop() ?? '',
             bytes: entry.encodedBodySize,
-          })),
-      )
+          }))
+      })
 
       expect(hero.length, `${label} fetched ${String(hero.length)} hero images`).toBe(1)
 

@@ -28,6 +28,9 @@ import { join, relative } from 'node:path'
  */
 const SKIP = new Set(['node_modules', '.next', '.lighthouseci', 'playwright-report'])
 
+/** Scratch directories used while deleting large trees; not part of the project. */
+const SKIP_PREFIX = '.trash-'
+
 /** Inside .git only the top level matters, and objects/ is enormous. */
 const SHALLOW = new Set(['.git'])
 
@@ -39,7 +42,7 @@ async function findConflicts(directory, root) {
 
   const entries = await readdir(directory, { withFileTypes: true })
   for (const entry of entries) {
-    if (SKIP.has(entry.name)) continue
+    if (SKIP.has(entry.name) || entry.name.startsWith(SKIP_PREFIX)) continue
 
     const path = join(directory, entry.name)
     if (CONFLICT.test(entry.name)) found.push(relative(root, path))
