@@ -95,6 +95,8 @@ test.describe('artboard fidelity', () => {
     })
 
     expect(measured.maxWidth).toBeCloseTo(measured.cap, 0)
+    // Slack for the same reason as SUBPIXEL in ./geometry: a clamp() resolves to
+    // a fractional width and the rendered box is reported as a float.
     expect(measured.rendered).toBeLessThanOrEqual(measured.cap + 1)
   })
 

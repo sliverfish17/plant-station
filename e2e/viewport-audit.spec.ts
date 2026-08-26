@@ -1,5 +1,7 @@
 import { expect, test, type Page } from '@playwright/test'
 
+import { SUBPIXEL } from './geometry'
+
 /**
  * A sweep across every width a visitor plausibly arrives at, not just the three
  * the artboards were drawn at.
@@ -170,10 +172,12 @@ test.describe('viewport sweep', () => {
         await expect(drawer).toBeVisible({ timeout: 1000 })
       }, `${label} drawer did not open`).toPass({ timeout: 15_000 })
 
-      // The drawer must never exceed the viewport, at any width.
+      // The drawer must never exceed the viewport, at any width. Measured with
+      // sub-pixel tolerance because the slide-in transform reports the box as a
+      // float; see SUBPIXEL.
       const box = await drawer.boundingBox()
       expect(box?.width ?? 0, `${label} drawer is wider than the viewport`).toBeLessThanOrEqual(
-        width,
+        width + SUBPIXEL,
       )
 
       await page.keyboard.press('Escape')

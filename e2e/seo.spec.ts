@@ -214,13 +214,45 @@ test.describe('crawlability', () => {
     }
   })
 
-  test('robots.txt allows the site and points at the sitemap', async ({ request }) => {
+  /**
+   * robots.txt has two contracts and the right one depends on where the content
+   * came from, so the test asks the same question the app does.
+   *
+   * A build running on seed content is a placeholder: invented testimonials
+   * attributed to people who do not exist, a 555-01xx phone number, and a domain
+   * that is not settled yet (D1). It stays out of the index entirely. A build
+   * with Contentful credentials is the real site, where organic search is a
+   * primary channel, so everything but the API routes is open.
+   */
+  const isLiveContent =
+    Boolean(process.env.CONTENTFUL_SPACE_ID) && Boolean(process.env.CONTENTFUL_DELIVERY_TOKEN)
+
+  test('robots.txt matches the content the site is actually serving', async ({ request }) => {
     const response = await request.get('/robots.txt')
     expect(response.status()).toBe(200)
 
     const text = await response.text()
-    expect(text).toContain('Allow: /')
-    expect(text).toContain('Disallow: /api/')
-    expect(text).toContain('Sitemap: https://plant-station.com/sitemap.xml')
+
+    if (isLiveContent) {
+      expect(text).toContain('Allow: /')
+      expect(text).toContain('Disallow: /api/')
+      expect(text).toContain('Sitemap: https://plant-station.com/sitemap.xml')
+      return
+    }
+
+    expect(text, 'placeholder content must be blocked outright').toContain('Disallow: /')
+    // Nothing to advertise while the whole site is disallowed.
+    expect(text).not.toContain('Sitemap:')
+  })
+
+  test('placeholder pages carry noindex, which is what keeps them out of results', async ({
+    page,
+  }) => {
+    test.skip(isLiveContent, 'the real site is meant to be indexed')
+
+    // robots.txt only asks a crawler not to fetch; Google will still index a URL
+    // it finds linked elsewhere. This is the directive that actually excludes it.
+    await page.goto('/')
+    await expect(page.locator('head meta[name="robots"]')).toHaveAttribute('content', /noindex/)
   })
 })
