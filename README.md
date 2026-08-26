@@ -153,10 +153,13 @@ as macOS, or `npm ci` fails on CI while succeeding locally. If you add a
 dependency on a Mac, regenerate the lockfile for Linux before pushing:
 
 ```bash
-docker run --rm --platform linux/amd64 -u "$(id -u):$(id -g)" -e HOME=/tmp \
-  -v "$PWD":/app -w /app node:22-bookworm-slim \
-  npm install --package-lock-only
+npm run relock   # regenerates the lockfile under linux/amd64, then commit it
 ```
+
+The symptom is `npm ci` failing on the runner with `Missing: @emnapi/runtime from
+lock file` while working fine locally. npm records optional dependencies for the
+platform it runs on, so a macOS `npm install` silently prunes the Linux-only
+ones.
 
 ## What is verified, and where
 

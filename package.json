@@ -24,7 +24,8 @@
     "lighthouse": "lhci autorun",
     "check:icloud": "node scripts/check-icloud-duplicates.js",
     "icloud:shield": "bash scripts/icloud-shield.sh",
-    "build:hero": "node scripts/build-hero-derivatives.js"
+    "build:hero": "node scripts/build-hero-derivatives.js",
+    "relock": "bash scripts/relock-for-linux.sh"
   },
   "dependencies": {
     "@contentful/rich-text-react-renderer": "16.2.2",
