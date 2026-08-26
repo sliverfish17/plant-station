@@ -69,6 +69,23 @@ npx contentful-migration@latest \
 
 It prints a plan and asks for confirmation before writing anything.
 
+### Then apply the labels
+
+```bash
+npx contentful-migration@latest \
+  --space-id <SPACE_ID> \
+  --environment-id master \
+  --access-token <MANAGEMENT_TOKEN> \
+  contentful/migrations/002-field-help-text.cjs
+```
+
+This is a second migration rather than part of the first because interleaving
+help text with field creation makes Contentful republish the content type around
+every single field — about a hundred extra API calls, and a plan long enough that
+a real error scrolls off the top. Splitting them also means a problem with the
+labels cannot leave the content model half-built. 002 only sets editor labels, so
+it is safe to re-run.
+
 This creates six content types — `plant`, `project`, `blogPost`, `testimonial`,
 `service`, `siteSettings` — with validation already in place. Building them by
 hand in the UI is possible but a bad idea: the field IDs have to match the
