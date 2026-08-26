@@ -50,23 +50,39 @@ function auditWidth(size: (typeof WIDTHS)[number]) {
         const doc = document.documentElement
         const overflow = doc.scrollWidth - doc.clientWidth
 
-        // Anything sticking out past the right edge, named so a failure is
-        // actionable rather than just "something overflows".
+        /**
+         * An element is only an offender if it widens the *page*. Geometry alone
+         * is not enough: `getBoundingClientRect` reports the full box even when
+         * an ancestor clips it, so the testimonial slider — a wide track inside
+         * `overflow-hidden`, which is the whole mechanism — reads as a 500px
+         * overhang while being perfectly contained.
+         */
+        const isClipped = (node: HTMLElement): boolean => {
+          let ancestor = node.parentElement
+          while (ancestor !== null && ancestor !== document.body) {
+            if (getComputedStyle(ancestor).overflowX !== 'visible') return true
+            ancestor = ancestor.parentElement
+          }
+          return false
+        }
+
         const offenders: string[] = []
         for (const node of document.querySelectorAll<HTMLElement>('body *')) {
           const rect = node.getBoundingClientRect()
           if (rect.width === 0 || rect.height === 0) continue
-          if (rect.right > doc.clientWidth + 1 || rect.left < -1) {
-            const style = getComputedStyle(node)
-            // Deliberately off-canvas: the skip link and the honeypot.
-            if (style.position === 'absolute' && rect.right < 0) continue
-            if (node.closest('[aria-hidden="true"]') !== null) continue
-            if (node.classList.contains('skip-link')) continue
-            offenders.push(
-              `${node.tagName.toLowerCase()}.${node.className.slice(0, 40)} ` +
-                `[${Math.round(rect.left)}→${Math.round(rect.right)}]`,
-            )
-          }
+          if (rect.right <= doc.clientWidth + 1 && rect.left >= -1) continue
+
+          const style = getComputedStyle(node)
+          // Deliberately off-canvas: the skip link and the honeypot.
+          if (style.position === 'absolute' && rect.right < 0) continue
+          if (node.closest('[aria-hidden="true"]') !== null) continue
+          if (node.classList.contains('skip-link')) continue
+          if (isClipped(node)) continue
+
+          offenders.push(
+            `${node.tagName.toLowerCase()}.${node.className.slice(0, 40)} ` +
+              `[${Math.round(rect.left)}→${Math.round(rect.right)}]`,
+          )
         }
 
         return { overflow, offenders: offenders.slice(0, 5) }
@@ -93,10 +109,18 @@ test.describe('viewport sweep', () => {
   }
 
   test('the hero fetches exactly one image, sized for the viewport', async ({ page }) => {
+    // Twelve viewports in one test; the default per-test budget is not enough.
+    test.setTimeout(120_000)
+
     for (const { width, height, label } of WIDTHS) {
       await page.setViewportSize({ width, height })
       await page.goto('/')
-      await page.waitForLoadState('networkidle')
+
+      // Waiting on the hero itself rather than on network silence: `networkidle`
+      // waits for the whole page to go quiet, which is both slower and unrelated
+      // to the question being asked.
+      const heroImage = page.locator('section[aria-labelledby="hero-heading"] img').first()
+      await expect(heroImage).toHaveJSProperty('complete', true)
 
       const hero = await page.evaluate(() => {
         // `getEntriesByType` is typed as returning the base PerformanceEntry;
@@ -135,9 +159,16 @@ test.describe('viewport sweep', () => {
       const trigger = page.getByRole('button', { name: /menu/i })
       await expect(trigger, `${label} has no menu trigger`).toBeVisible()
 
-      await trigger.click()
       const drawer = page.getByRole('navigation', { name: /primary/i })
-      await expect(drawer, `${label} drawer did not open`).toBeVisible()
+
+      // The trigger is server-rendered, so a click that lands before hydration
+      // is silently a no-op. Retrying the click until the drawer appears waits
+      // for interactivity without asserting on a framework-internal signal.
+      // Reopening an already-open drawer is idempotent — the trigger only opens.
+      await expect(async () => {
+        await trigger.click()
+        await expect(drawer).toBeVisible({ timeout: 1000 })
+      }, `${label} drawer did not open`).toPass({ timeout: 15_000 })
 
       // The drawer must never exceed the viewport, at any width.
       const box = await drawer.boundingBox()

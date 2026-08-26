@@ -1,6 +1,12 @@
 import { defineConfig, devices } from '@playwright/test'
 
-const PORT = 3000
+/**
+ * Overridable so a test run never collides with a dev server someone has open.
+ * Reusing port 3000 means Playwright silently tests whatever is already there —
+ * including a dev server whose `.next` a concurrent build has invalidated, which
+ * looks like React failing to hydrate rather than like the wrong target.
+ */
+const PORT = Number(process.env.PLAYWRIGHT_PORT ?? 3000)
 const baseURL = `http://127.0.0.1:${PORT}`
 
 export default defineConfig({
@@ -39,7 +45,7 @@ export default defineConfig({
     // Next renames rather than deletes what it cannot remove, so the directory
     // fills with "app 2", "chunks 3" duplicates until it is unusable.
     // Run `npm run build` yourself first (CI does, as its own step).
-    command: 'npm run start',
+    command: `npm run start -- --port ${String(PORT)}`,
     url: baseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
