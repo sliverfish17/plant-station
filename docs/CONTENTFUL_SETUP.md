@@ -33,7 +33,31 @@ step 3 — do not put it in `.env.local` and never give it to the deployed site.
 
 ## 3 · Create the content model
 
-The model is code, not clicks. Run the migration:
+### First, check the token works
+
+`The provided space does not exist or you do not have access` is the error
+Contentful gives for several unrelated mistakes, and the migration tool cannot
+tell them apart. This can:
+
+```bash
+CONTENTFUL_SPACE_ID=<space id> \
+CONTENTFUL_MANAGEMENT_TOKEN=<management token> \
+npm run contentful:check
+```
+
+It prints the space name if all is well, and otherwise says which of the three
+things is wrong — nothing secret is echoed.
+
+**By far the most common cause is the wrong token.** A management token always
+starts with `CFPAT-`. If yours doesn't, you've picked up the Content Delivery
+token — it sits on the same screen and can read content, but it cannot create
+content types.
+
+The second most common is the space **ID** versus its **name**. The ID is in the
+browser URL while you're in the space:
+`app.contentful.com/spaces/`**`this-part`**`/...`
+
+### Then run the migration
 
 ```bash
 npx contentful-migration@latest \
