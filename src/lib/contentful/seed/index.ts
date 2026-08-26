@@ -10,6 +10,8 @@ import type {
   SiteSettingsQuery,
   TestimonialFieldsFragment,
 } from '../generated/graphql'
+import { LOCAL_HERO_SRC } from '@/lib/local-image'
+
 import { bulletList, heading, paragraph, richText } from './rich-text'
 
 /**
@@ -34,11 +36,19 @@ const NO_ASSET_YET = (id: string): AssetFieldsFragment => ({
   contentType: null,
 })
 
-/** The one real photograph in the bundle. Portrait source, cropped per breakpoint. */
+/**
+ * The one real photograph in the bundle. Portrait source, cropped per breakpoint.
+ *
+ * The URL is an identifier rather than a file: `HeroImage` recognises it and
+ * serves the pre-generated derivatives in `public/hero/` (see
+ * `src/lib/local-image.ts`), because a custom next/image loader cannot resize a
+ * local file. When Contentful holds the hero this becomes an ordinary asset URL
+ * and that whole path drops out.
+ */
 const HERO_PHOTO: AssetFieldsFragment = {
   __typename: 'Asset',
   sys: { __typename: 'Sys', id: 'asset-hero-edyta-garden' },
-  url: '/hero-edyta-garden.jpeg',
+  url: LOCAL_HERO_SRC,
   width: 1536,
   height: 2048,
   contentType: 'image/jpeg',

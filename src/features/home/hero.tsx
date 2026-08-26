@@ -1,9 +1,10 @@
-import { IMAGE_SIZES } from '@/components/ui/aspect'
 import { Button } from '@/components/ui/button'
-import { CmsImage } from '@/components/ui/cms-image'
+import { ImageSlot } from '@/components/ui/image-slot'
 import { ROUTES } from '@/config/navigation'
 import { SITE } from '@/config/site'
 import type { SiteSettingsEntry } from '@/lib/contentful/queries'
+
+import { HeroImage } from './hero-image'
 
 /**
  * The hero.
@@ -18,43 +19,37 @@ import type { SiteSettingsEntry } from '@/lib/contentful/queries'
  * photograph stays visible everywhere the text is not.
  */
 export function Hero({ settings }: { readonly settings: SiteSettingsEntry }) {
+  const hasPhoto = settings.heroImageMobile.url !== null && settings.heroImageDesktop.url !== null
+
   return (
     <section aria-labelledby="hero-heading" className="relative">
-      <div className="lg:hidden">
-        <CmsImage
-          asset={settings.heroImageMobile}
-          alt={settings.heroImageMobileAltText}
-          ratio="4:5"
-          sizes={IMAGE_SIZES.hero}
-          slotLabel="Hero — Edyta in garden · 4:5"
-          objectPosition="center 47%"
-          rounded="none"
-          priority
-        />
-      </div>
-      <div className="hidden lg:block">
-        <CmsImage
-          asset={settings.heroImageDesktop}
-          alt={settings.heroImageDesktopAltText}
-          ratio="16:9"
-          sizes={IMAGE_SIZES.hero}
-          slotLabel="Hero — Edyta in garden · 16:9"
-          objectPosition="center 58%"
-          rounded="none"
-          priority
-        />
+      {/* One fixed-ratio box per breakpoint so the space is reserved before any
+          image data arrives; the <picture> inside fetches exactly one file. */}
+      <div className="relative aspect-[4/5] w-full overflow-hidden bg-leaf-200 lg:aspect-[16/9]">
+        {hasPhoto ? (
+          <HeroImage
+            mobile={{
+              asset: settings.heroImageMobile,
+              alt: settings.heroImageMobileAltText,
+              // The source photograph is portrait; these keep Edyta and the
+              // flower bed in frame at each crop, per the artboards.
+              focus: 'center 47%',
+            }}
+            desktop={{
+              asset: settings.heroImageDesktop,
+              alt: settings.heroImageDesktopAltText,
+              focus: 'center 58%',
+            }}
+          />
+        ) : (
+          <ImageSlot
+            ratio="fill"
+            label="Hero — Edyta in garden · 16:9 desktop, 4:5 mobile"
+            rounded="none"
+          />
+        )}
       </div>
 
-      {/* The scrim runs bottom-to-top on mobile and left-to-right on desktop,
-          following where the copy sits, so the photograph stays visible
-          everywhere the text is not.
-
-          `lg:from-0%` is load-bearing: the mobile ramp starts its first stop at
-          55%, and a breakpoint that overrides the colour but not the position
-          leaves the stops out of order (55% then 42%). The browser clamps that
-          into a hard vertical seam instead of a fade. Both ends also fade to
-          `scrim/0` rather than `transparent`, which is transparent *black* and
-          greys the midpoint. */}
       <div className="absolute inset-0 flex items-end bg-linear-to-t from-scrim/92 from-55% to-scrim/0 to-100% lg:items-center lg:bg-linear-to-r lg:from-scrim/88 lg:from-0% lg:via-scrim/55 lg:via-42% lg:to-scrim/0 lg:to-68%">
         <div className="mx-auto w-full max-w-content px-gutter pb-8 lg:pb-0">
           <div className="max-w-[46ch]">

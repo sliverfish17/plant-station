@@ -29,25 +29,24 @@ export function isContentfulAsset(src: string): boolean {
  * loader so `blurDataURL` generation and OG-image rendering can reuse it
  * without pretending to be next/image.
  */
+export type ContentfulTransform = {
+  width: number
+  quality?: number
+  height?: number
+  fit?: 'fill' | 'pad' | 'crop' | 'thumb' | 'scale'
+  /** Defaults to AVIF; `<picture>` sources ask for one format each. */
+  format?: 'avif' | 'webp' | 'jpg' | 'png'
+}
+
 export function contentfulImageUrl(
   src: string,
-  {
-    width,
-    quality = DEFAULT_QUALITY,
-    height,
-    fit,
-  }: {
-    width: number
-    quality?: number
-    height?: number
-    fit?: 'fill' | 'pad' | 'crop' | 'thumb' | 'scale'
-  },
+  { width, quality = DEFAULT_QUALITY, height, fit, format = 'avif' }: ContentfulTransform,
 ): string {
   const url = new URL(src, 'https:')
   url.searchParams.set('w', String(Math.round(width)))
   if (height !== undefined) url.searchParams.set('h', String(Math.round(height)))
   if (fit !== undefined) url.searchParams.set('fit', fit)
-  url.searchParams.set('fm', 'avif')
+  url.searchParams.set('fm', format)
   url.searchParams.set('q', String(quality))
   return url.toString()
 }

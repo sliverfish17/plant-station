@@ -75,6 +75,13 @@ export function CmsImage({
 
   const blurDataURL = blurPlaceholder(url)
 
+  // A custom loader can only hand back the URL it was given, so for anything
+  // that is not a Contentful asset every srcset entry would be the same file —
+  // a srcset that costs bytes to send and buys the browser nothing. Marking it
+  // unoptimized states that plainly, and silences Next's warning about a loader
+  // that ignores `width`.
+  const unoptimized = !isContentfulAsset(url)
+
   return (
     <div
       className={`relative overflow-hidden ${aspectClass(ratio)} ${ROUNDED_CLASS[rounded]} w-full bg-leaf-200 ${className ?? ''}`}
@@ -85,6 +92,7 @@ export function CmsImage({
         fill
         sizes={sizes}
         priority={priority}
+        unoptimized={unoptimized}
         // The hero is the LCP element; everything else waits until it is near.
         {...(priority ? { fetchPriority: 'high' as const } : {})}
         loading={priority ? 'eager' : 'lazy'}

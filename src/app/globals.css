@@ -84,6 +84,22 @@
 
 @layer utilities {
   /**
+   * The hero's crop focus differs per breakpoint, and `object-position` cannot be
+   * set from a `<picture>` `<source>` — the source only chooses the file. The two
+   * focal points ride in as custom properties and this swaps between them at the
+   * same breakpoint the art direction uses.
+   */
+  .hero-focus {
+    object-position: var(--hero-focus-mobile);
+  }
+
+  @media (width >= 64rem) {
+    .hero-focus {
+      object-position: var(--hero-focus-desktop);
+    }
+  }
+
+  /**
    * Skip link — visible only when focused, per landmark navigation spec.
    */
   .skip-link {
