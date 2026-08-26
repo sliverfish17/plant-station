@@ -2,13 +2,18 @@ import type { Metadata, Viewport } from 'next'
 
 import { SITE } from '@/config/site'
 import { SiteAnalytics } from '@/features/analytics/analytics'
-import { contentSource } from '@/lib/env'
+import { contentSource, deploymentOrigin } from '@/lib/env'
 import { fontVariables } from '@/lib/fonts'
 
 import './globals.css'
 
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE.domain),
+  // Absolute URLs — the Open Graph image above all — resolve against this. See
+  // `deploymentOrigin` for why a placeholder deploy describes itself by the URL
+  // it is served from rather than by the domain it intends to own.
+  metadataBase: new URL(
+    deploymentOrigin === undefined ? SITE.domain : `https://${deploymentOrigin}`,
+  ),
   title: {
     default: `Garden Design & Plant Care in Metro Detroit | ${SITE.brandName}`,
     template: `%s | ${SITE.brandName}`,

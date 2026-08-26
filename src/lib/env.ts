@@ -32,6 +32,11 @@ const rawEnv = z
     RESEND_FROM_EMAIL: optionalString,
 
     TURNSTILE_SECRET_KEY: optionalString,
+
+    // Set by Vercel, not by us. Read here rather than at the point of use so
+    // that this file stays the only place raw `process.env` is touched.
+    VERCEL_PROJECT_PRODUCTION_URL: optionalString,
+    VERCEL_URL: optionalString,
   })
   .parse({
     CONTENTFUL_SPACE_ID: process.env.CONTENTFUL_SPACE_ID,
@@ -43,6 +48,8 @@ const rawEnv = z
     RESEND_API_KEY: process.env.RESEND_API_KEY,
     RESEND_FROM_EMAIL: process.env.RESEND_FROM_EMAIL,
     TURNSTILE_SECRET_KEY: process.env.TURNSTILE_SECRET_KEY,
+    VERCEL_PROJECT_PRODUCTION_URL: process.env.VERCEL_PROJECT_PRODUCTION_URL,
+    VERCEL_URL: process.env.VERCEL_URL,
   })
 
 /** Where content comes from. `fixtures` is the seed content from the design file. */
@@ -80,6 +87,25 @@ function resolveContentSource(): ContentSource {
 }
 
 export const contentSource: ContentSource = resolveContentSource()
+
+/**
+ * The origin this deployment is actually reachable at, when that is not the
+ * domain the site claims as its own.
+ *
+ * `SITE.domain` is still a parked decision (D1), so on a placeholder deployment
+ * it names a domain nobody owns. Anything resolved against it — the Open Graph
+ * image most visibly — then points somewhere that does not answer, and a link
+ * shared with the client previews as a broken card.
+ *
+ * The production URL is preferred over the per-deployment one because it is
+ * stable across deploys; `VERCEL_URL` changes every time and would leave older
+ * shared links pointing at a superseded deployment. Undefined off Vercel, and
+ * undefined once real content is connected — by then the domain is the answer.
+ */
+export const deploymentOrigin: string | undefined =
+  contentSource.mode === 'fixtures'
+    ? (rawEnv.VERCEL_PROJECT_PRODUCTION_URL ?? rawEnv.VERCEL_URL)
+    : undefined
 
 /** TODO(D5): the delivery target — a store can be added alongside it. */
 export type MailDelivery =
