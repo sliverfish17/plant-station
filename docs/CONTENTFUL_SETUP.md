@@ -99,6 +99,9 @@ now render as empty sections**, so expect a sparse site until step 6.
 
 **Do not skip this.**
 
+This reads `.env.local`, so make sure step 4 is done first — it needs the
+**delivery** token, not the management one.
+
 ```bash
 CONTENTFUL_SCHEMA_FROM_API=1 npm run codegen
 npm run typecheck

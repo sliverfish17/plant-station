@@ -82,7 +82,14 @@ mkdir -p "$LOG_DIR"
 
 # ── run one migration file, reporting properly if it fails ───────────────────
 run_migration() {
-  local file="$1" label="$2" log="$LOG_DIR/$(basename "$file" .cjs).log"
+  # Separate declarations: bash expands every word on a `local` line before
+  # assigning any of them, so deriving `log` from `file` in one statement reads
+  # `file` while it is still unset — which under `set -u` kills the log path the
+  # failure report depends on.
+  local file="$1"
+  local label="$2"
+  local log
+  log="$LOG_DIR/$(basename "$file" .cjs).log"
 
   bold "$label"
   npx --yes contentful-migration@latest --yes \
