@@ -33,64 +33,47 @@ step 3 — do not put it in `.env.local` and never give it to the deployed site.
 
 ## 3 · Create the content model
 
-### First, check the token works
-
-`The provided space does not exist or you do not have access` is the error
-Contentful gives for several unrelated mistakes, and the migration tool cannot
-tell them apart. This can:
+Set the two values once, so there is nothing to paste into the middle of a long
+command:
 
 ```bash
-CONTENTFUL_SPACE_ID=<space id> \
-CONTENTFUL_MANAGEMENT_TOKEN=<management token> \
-npm run contentful:check
+export CONTENTFUL_SPACE_ID=your-space-id
+export CONTENTFUL_MANAGEMENT_TOKEN=CFPAT-your-token
 ```
 
-It prints the space name if all is well, and otherwise says which of the three
-things is wrong — nothing secret is echoed.
+Then:
 
-**By far the most common cause is the wrong token.** A management token always
-starts with `CFPAT-`. If yours doesn't, you've picked up the Content Delivery
-token — it sits on the same screen and can read content, but it cannot create
-content types.
+```bash
+npm run contentful:migrate
+```
 
-The second most common is the space **ID** versus its **name**. The ID is in the
+That checks the credentials, warns if the space already has content types, runs
+both migrations, and — if anything fails — pulls the error out of the log rather
+than leaving it to scroll past.
+
+**If it complains about the token:** a management token always starts with
+`CFPAT-`. If yours doesn't, you've picked up the Content Delivery token, which
+sits on the same screen and can read content but cannot create content types.
+Get the right one at **Settings → API keys → Content management tokens**.
+
+**If it can't find the space:** the space **ID** is not its name. It's in the
 browser URL while you're in the space:
-`app.contentful.com/spaces/`**`this-part`**`/...`
+`app.contentful.com/spaces/`**`this-part`**`/...`. Run `npm run contentful:check`
+to list every space your token can actually reach.
 
-### Then run the migration
+**If a previous attempt got part-way**, the script says which content types
+already exist. Delete them in Content model → each type → Delete, then run it
+again.
 
-```bash
-npx contentful-migration@latest \
-  --space-id <YOUR_SPACE_ID> \
-  --environment-id master \
-  --access-token <YOUR_MANAGEMENT_TOKEN> \
-  contentful/migrations/001-initial-content-model.cjs
-```
+### What it creates
 
-It prints a plan and asks for confirmation before writing anything.
+Six content types — `plant`, `project`, `blogPost`, `testimonial`, `service`,
+`siteSettings` — with validation in place, then a second pass that adds the
+plain-language help text under every field.
 
-### Then apply the labels
-
-```bash
-npx contentful-migration@latest \
-  --space-id <SPACE_ID> \
-  --environment-id master \
-  --access-token <MANAGEMENT_TOKEN> \
-  contentful/migrations/002-field-help-text.cjs
-```
-
-This is a second migration rather than part of the first because interleaving
-help text with field creation makes Contentful republish the content type around
-every single field — about a hundred extra API calls, and a plan long enough that
-a real error scrolls off the top. Splitting them also means a problem with the
-labels cannot leave the content model half-built. 002 only sets editor labels, so
-it is safe to re-run.
-
-This creates six content types — `plant`, `project`, `blogPost`, `testimonial`,
-`service`, `siteSettings` — with validation already in place. Building them by
-hand in the UI is possible but a bad idea: the field IDs have to match the
-GraphQL queries exactly, and a typo surfaces later as a `null` on a page rather
-than as an error.
+The model is code rather than clicks because the field IDs have to match the
+GraphQL queries exactly, and a typo made in the UI surfaces much later as a blank
+area on a page rather than as an error.
 
 ## 4 · Point the app at the space
 

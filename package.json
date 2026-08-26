@@ -26,7 +26,8 @@
     "icloud:shield": "bash scripts/icloud-shield.sh",
     "build:hero": "node scripts/build-hero-derivatives.js",
     "relock": "bash scripts/relock-for-linux.sh",
-    "contentful:check": "bash scripts/check-contentful-access.sh"
+    "contentful:check": "bash scripts/check-contentful-access.sh",
+    "contentful:migrate": "bash scripts/migrate-contentful.sh"
   },
   "dependencies": {
     "@contentful/rich-text-react-renderer": "16.2.2",
