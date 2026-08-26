@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 
 import { SITE } from '@/config/site'
 import { SiteAnalytics } from '@/features/analytics/analytics'
+import { contentSource } from '@/lib/env'
 import { fontVariables } from '@/lib/fonts'
 
 import './globals.css'
@@ -19,6 +20,11 @@ export const metadata: Metadata = {
   // TODO(D1): publisher name follows the brand decision.
   publisher: SITE.brandName,
   formatDetection: { telephone: true, email: true, address: false },
+  // Belt and braces with robots.txt: a `Disallow` only asks a crawler not to
+  // fetch the page, and Google will still index a URL it finds linked elsewhere.
+  // `noindex` is the directive that actually keeps it out of results — but it
+  // has to be read to be obeyed, which is why both are set. See robots.ts.
+  ...(contentSource.mode === 'fixtures' ? { robots: { index: false, follow: false } } : {}),
 }
 
 export const viewport: Viewport = {
