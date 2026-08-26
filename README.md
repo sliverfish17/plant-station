@@ -185,6 +185,13 @@ rather than by review:
 Latest run: accessibility **100**, SEO **100**, CLS **0.000** on every route;
 performance 93–100.
 
+## Setting up Contentful
+
+`docs/CONTENTFUL_SETUP.md` is the runbook: create the space, run the migration,
+regenerate the types from the real schema, add content, wire the publish webhook
+and preview. The site runs on seed content until two environment variables are
+set, so it can be done at any pace without downtime.
+
 ## Parked decisions
 
 Several business decisions are genuinely open. They are **not** guessed and
