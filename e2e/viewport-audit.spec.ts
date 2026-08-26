@@ -73,7 +73,10 @@ function auditWidth(size: (typeof WIDTHS)[number]) {
       })
 
       expect(report.offenders, `${route} @ ${String(size.width)} overflows`).toEqual([])
-      expect(report.overflow, `${route} @ ${String(size.width)} scrolls sideways`).toBeLessThanOrEqual(0)
+      expect(
+        report.overflow,
+        `${route} @ ${String(size.width)} scrolls sideways`,
+      ).toBeLessThanOrEqual(0)
     }
   }
 }
@@ -99,7 +102,10 @@ test.describe('viewport sweep', () => {
         performance
           .getEntriesByType('resource')
           .filter((entry) => entry.name.includes('edyta-garden'))
-          .map((entry) => ({ name: entry.name.split('/').pop() ?? '', bytes: entry.encodedBodySize })),
+          .map((entry) => ({
+            name: entry.name.split('/').pop() ?? '',
+            bytes: entry.encodedBodySize,
+          })),
       )
 
       expect(hero.length, `${label} fetched ${String(hero.length)} hero images`).toBe(1)
@@ -150,7 +156,10 @@ test.describe('viewport sweep', () => {
       // Above 2560 a capped column is intentional — beyond that, line length
       // matters more than filling glass. Below it, the page should not look lost.
       const floor = width >= 2560 ? 0.35 : 0.7
-      expect(used, `${label} uses only ${String(Math.round(used * 100))}% of the width`).toBeGreaterThan(floor)
+      expect(
+        used,
+        `${label} uses only ${String(Math.round(used * 100))}% of the width`,
+      ).toBeGreaterThan(floor)
     }
   })
 })
