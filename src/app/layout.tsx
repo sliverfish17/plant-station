@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next'
 
 import { SITE } from '@/config/site'
 import { SiteAnalytics } from '@/features/analytics/analytics'
-import { contentSource, deploymentOrigin } from '@/lib/env'
+import { deploymentOrigin, isIndexable } from '@/lib/env'
 import { fontVariables } from '@/lib/fonts'
 
 import './globals.css'
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   // fetch the page, and Google will still index a URL it finds linked elsewhere.
   // `noindex` is the directive that actually keeps it out of results — but it
   // has to be read to be obeyed, which is why both are set. See robots.ts.
-  ...(contentSource.mode === 'fixtures' ? { robots: { index: false, follow: false } } : {}),
+  ...(isIndexable ? {} : { robots: { index: false, follow: false } }),
 }
 
 export const viewport: Viewport = {

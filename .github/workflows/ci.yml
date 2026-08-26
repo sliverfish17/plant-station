@@ -83,8 +83,17 @@ jobs:
           CONTENTFUL_SPACE_ID: ${{ secrets.CONTENTFUL_SPACE_ID }}
           CONTENTFUL_DELIVERY_TOKEN: ${{ secrets.CONTENTFUL_DELIVERY_TOKEN }}
           CONTENTFUL_ENVIRONMENT: master
+          # Measure the SEO contract the site launches with. Without content
+          # credentials this build serves seed copy, which is deliberately
+          # noindex — and a blocked page scores 0 on `is-crawlable`, taking the
+          # whole SEO category with it. Asserting against a configuration that
+          # never ships would make the gate worthless, and dropping the
+          # assertion would remove the check most worth having. See isIndexable.
+          SITE_INDEXABLE: '1'
       - name: Lighthouse
         run: npm run lighthouse
+        env:
+          SITE_INDEXABLE: '1'
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:

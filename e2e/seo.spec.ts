@@ -224,8 +224,9 @@ test.describe('crawlability', () => {
    * with Contentful credentials is the real site, where organic search is a
    * primary channel, so everything but the API routes is open.
    */
-  const isLiveContent =
-    Boolean(process.env.CONTENTFUL_SPACE_ID) && Boolean(process.env.CONTENTFUL_DELIVERY_TOKEN)
+  const isIndexable =
+    (Boolean(process.env.CONTENTFUL_SPACE_ID) && Boolean(process.env.CONTENTFUL_DELIVERY_TOKEN)) ||
+    process.env.SITE_INDEXABLE === '1'
 
   test('robots.txt matches the content the site is actually serving', async ({ request }) => {
     const response = await request.get('/robots.txt')
@@ -233,7 +234,7 @@ test.describe('crawlability', () => {
 
     const text = await response.text()
 
-    if (isLiveContent) {
+    if (isIndexable) {
       expect(text).toContain('Allow: /')
       expect(text).toContain('Disallow: /api/')
       expect(text).toContain('Sitemap: https://plant-station.com/sitemap.xml')
@@ -248,7 +249,7 @@ test.describe('crawlability', () => {
   test('placeholder pages carry noindex, which is what keeps them out of results', async ({
     page,
   }) => {
-    test.skip(isLiveContent, 'the real site is meant to be indexed')
+    test.skip(isIndexable, 'the real site is meant to be indexed')
 
     // robots.txt only asks a crawler not to fetch; Google will still index a URL
     // it finds linked elsewhere. This is the directive that actually excludes it.

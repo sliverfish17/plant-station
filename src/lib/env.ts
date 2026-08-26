@@ -33,6 +33,8 @@ const rawEnv = z
 
     TURNSTILE_SECRET_KEY: optionalString,
 
+    SITE_INDEXABLE: optionalString,
+
     // Set by Vercel, not by us. Read here rather than at the point of use so
     // that this file stays the only place raw `process.env` is touched.
     VERCEL_PROJECT_PRODUCTION_URL: optionalString,
@@ -48,6 +50,7 @@ const rawEnv = z
     RESEND_API_KEY: process.env.RESEND_API_KEY,
     RESEND_FROM_EMAIL: process.env.RESEND_FROM_EMAIL,
     TURNSTILE_SECRET_KEY: process.env.TURNSTILE_SECRET_KEY,
+    SITE_INDEXABLE: process.env.SITE_INDEXABLE,
     VERCEL_PROJECT_PRODUCTION_URL: process.env.VERCEL_PROJECT_PRODUCTION_URL,
     VERCEL_URL: process.env.VERCEL_URL,
   })
@@ -87,6 +90,28 @@ function resolveContentSource(): ContentSource {
 }
 
 export const contentSource: ContentSource = resolveContentSource()
+
+/**
+ * Whether this deployment may appear in search results.
+ *
+ * Derived from the content source, so it needs no attention in normal use:
+ * seed content is placeholder copy — invented testimonials, a 555-01xx phone
+ * number, an unsettled domain — and must never be indexed, while connecting
+ * Contentful opens the site up by itself.
+ *
+ * `SITE_INDEXABLE=1` forces it on, and exists for exactly one caller: the
+ * Lighthouse gate in CI. That gate asserts `is-crawlable`, which is worth
+ * keeping — shipping an accidental `noindex` is the most expensive SEO mistake
+ * available and the easiest to do silently. But a deliberately blocked build
+ * scores zero on it and drags the whole SEO category down with it. Without this
+ * override the choice would be to stop checking indexability, or to check it
+ * against a configuration the site never launches in. This way CI measures the
+ * contract that ships, and the e2e suite measures the placeholder one.
+ *
+ * Not a production switch. On Vercel the variable is absent and content is what
+ * decides.
+ */
+export const isIndexable: boolean = contentSource.mode === 'live' || rawEnv.SITE_INDEXABLE === '1'
 
 /**
  * The origin this deployment is actually reachable at, when that is not the
